@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Body Art - Iniciar Sesión</title>
+    <!-- CAMBIO CLAVE: Usamos la versión clásica compatible con file:/// -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0;1&family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .font-serif { font-family: 'Playfair Display', serif; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900 min-h-screen flex flex-col justify-between" onload="verificarCuentasSemilla()">
+
+    <!-- BARRA DE NAVEGACIÓN -->
+    <nav class="bg-white border-b border-gray-100 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center">
+                <div class="flex-shrink-0 flex items-center">
+                    <a href="index.html" class="flex items-center gap-2">
+                        <div class="w-12 h-12 rounded-full border-2 border-purple-600 flex items-center justify-center font-bold text-gray-800 text-sm">BODY</div>
+                        <span class="font-serif tracking-widest text-xl font-bold text-purple-600">ART STUDIO</span>
+                    </a>
+                </div>
+                <div>
+                    <a href="registro.html" class="text-xs font-bold uppercase text-gray-500 hover:text-purple-600 tracking-wider">Registrarse &rarr;</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- FORMULARIO DE ACCESO -->
+    <main class="flex-grow flex items-center justify-center px-4 py-12">
+        <div class="bg-white p-8 border border-gray-200 rounded-sm shadow-sm max-w-sm w-full space-y-6 text-xs">
+            <div class="text-center space-y-1">
+                <h2 class="font-serif text-2xl font-bold tracking-wide text-gray-900">Ingresar al Sistema</h2>
+                <p class="text-gray-500">Colocá tus credenciales para acceder a tu panel correspondiente.</p>
+            </div>
+
+            <form onsubmit="ejecutarInicioSesion(event)" class="space-y-4">
+                <div>
+                    <label class="block font-bold text-gray-600 mb-1 uppercase tracking-wider">Usuario o Correo</label>
+                    <input type="text" id="log-email" required placeholder="admin" class="w-full border border-gray-300 p-3 bg-white rounded-sm focus:outline-none focus:border-purple-600 text-xs font-medium font-mono">
+                </div>
+
+                <div>
+                    <label class="block font-bold text-gray-600 mb-1 uppercase tracking-wider">Contraseña</label>
+                    <input type="password" id="log-password" required placeholder="••••" class="w-full border border-gray-300 p-3 bg-white rounded-sm focus:outline-none focus:border-purple-600 text-xs font-medium">
+                </div>
+
+                <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold uppercase py-3.5 rounded-sm tracking-widest transition shadow-sm cursor-pointer">
+                    Iniciar Sesión
+                </button>
+            </form>
+
+            <!-- ACCESOS SUPER RÁPIDOS DE PRUEBA -->
+            <div class="bg-purple-50 border border-purple-100 p-3 rounded-sm space-y-1 text-[11px] text-purple-900">
+                <p class="font-bold uppercase tracking-wider text-[10px]"><i class="fa-solid fa-key"></i> Acceso Express Configurado:</p>
+                <p>• <strong>Admin Rápido:</strong> <span class="bg-white px-1 py-0.5 border rounded-sm font-mono font-bold">admin</span> | Contraseña: <span class="bg-white px-1 py-0.5 border rounded-sm font-mono font-bold">1234</span></p>
+                <p>• <strong>Cliente Base:</strong> <span class="font-mono">juan@gmail.com</span> | Contraseña: <span class="font-mono">juan123</span></p>
+            </div>
+
+            <div class="text-center border-t pt-4 text-gray-400">
+                ¿Todavía no tenés cuenta? <a href="registro.html" class="text-purple-600 font-bold hover:underline">Registrate acá</a>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-white border-t border-gray-100 py-6 text-center text-xs text-gray-400 uppercase tracking-widest">
+        &copy; 2026 Body Art Studio. Todos los derechos reservados.
+    </footer>
+
+    <script>
+        function verificarCuentasSemilla() {
+            let listaUsuarios = JSON.parse(localStorage.getItem('global-usuarios')) || [];
+            const existeAdmin = listaUsuarios.some(u => u.email === "admin");
+
+            if (!existeAdmin) {
+                listaUsuarios.push({
+                    nombre: "Administrador Supremo",
+                    email: "admin", 
+                    password: "1234",
+                    rol: "ADMIN"
+                });
+                
+                if (listaUsuarios.length === 1) {
+                    listaUsuarios.push({
+                        nombre: "Juan Cruz Tleye",
+                        email: "juan@gmail.com",
+                        password: "juan123",
+                        direccion: "Av. Universidad 1200",
+                        localidad: "Villa María",
+                        provincia: "Córdoba",
+                        cp: "5900",
+                        rol: "USER"
+                    });
+                }
+                localStorage.setItem('global-usuarios', JSON.stringify(listaUsuarios));
+                console.log("👥 Cuentas cargadas con éxito.");
+            }
+        }
+
+        function ejecutarInicioSesion(event) {
+            event.preventDefault();
+
+            // Quitamos el toLowerCase() para evitar conflictos de escritura en local
+            const emailInput = document.getElementById('log-email').value.trim();
+            const passwordInput = document.getElementById('log-password').value;
+
+            const listaUsuarios = JSON.parse(localStorage.getItem('global-usuarios')) || [];
+            const usuarioEncontrado = listaUsuarios.find(u => u.email === emailInput && u.password === passwordInput);
+
+            if (usuarioEncontrado) {
+                localStorage.setItem('usuario-sesion', JSON.stringify(usuarioEncontrado));
+                alert(`¡Acceso concedido! Bienvenido, ${usuarioEncontrado.nombre}.`);
+                
+                if (usuarioEncontrado.role === 'ADMIN' || usuarioEncontrado.rol === 'ADMIN') {
+                    window.location.href = 'admin-dashboard.html';
+                } else {
+                    window.location.href = 'productos.html';
+                }
+            } else {
+                alert("❌ Error: Credenciales incorrectas.");
+            }
+        }
+    </script>
+</body>
+</html>

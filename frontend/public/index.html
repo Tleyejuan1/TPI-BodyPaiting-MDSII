@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Body Art - Ilusiones</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .font-serif { font-family: 'Playfair Display', serif; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900 min-h-screen flex flex-col justify-between" onload="chequearSesionGlobal()">
+
+    <nav class="bg-white border-b border-gray-100 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center">
+                <div class="flex-shrink-0 flex items-center">
+                    <a href="index.html" class="flex items-center gap-2 cursor-pointer">
+                        <div class="w-12 h-12 rounded-full border-2 border-purple-600 flex items-center justify-center font-bold text-gray-800 text-sm">BODY</div>
+                        <span class="font-serif tracking-widest text-xl font-bold hidden sm:block">ART</span>
+                    </a>
+                </div>
+                <div class="hidden md:flex space-x-8 text-xs font-medium tracking-widest uppercase">
+                    <a href="index.html" class="text-purple-600 font-bold transition">Hogar</a>
+                    <a href="productos.html" class="text-gray-500 hover:text-purple-600 transition">Comercio / Kits</a>
+                    <a href="videos.html" class="text-gray-500 hover:text-purple-600 transition">Vídeos e Historias</a>
+                    <a href="contacto.html" class="text-gray-500 hover:text-purple-600 transition">Contacto y Reservas</a>
+                </div>
+                <div class="flex items-center space-x-6">
+                    <a href="productos.html?ver-carrito=true" class="relative p-2 text-gray-600 hover:text-purple-600 transition cursor-pointer">
+                        <i class="fa-solid fa-shopping-cart text-xl"></i>
+                        <span id="cart-badge" class="absolute -top-1 -right-1 hidden items-center justify-center px-2 py-0.5 text-xs font-bold leading-none text-white bg-purple-600 rounded-full">0</span>
+                    </a>
+                    <a href="login.html" id="nav-login-btn" class="hidden md:flex items-center gap-2 text-xs font-medium tracking-widest uppercase text-gray-600 hover:text-purple-600 border border-gray-300 rounded-full px-4 py-2 hover:border-purple-600 cursor-pointer">
+                        <i class="fa-solid fa-user"></i>
+                        <span id="nav-login-text">Ingresar</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow">
+        <div class="relative h-[80vh] w-full flex items-center justify-center overflow-hidden bg-black">
+            <div class="absolute inset-0 z-0 bg-[url('https://images.unsplash.com/photo-1513364776144-60967b0f800f?q=80&w=1471&auto=format&fit=crop')] bg-cover bg-center opacity-70 filter brightness-75"></div>
+            <div class="absolute inset-0 bg-black/20 z-10"></div>
+            <div class="relative z-20 max-w-4xl mx-auto px-6 text-center text-white">
+                <div class="bg-black/40 backdrop-blur-sm p-8 md:p-12 rounded-sm border border-white/10 inline-block">
+                    <h1 class="font-serif text-4xl md:text-6xl tracking-widest uppercase mb-4">Ilusiones</h1>
+                    <p class="text-sm md:text-lg tracking-wide font-light max-w-2xl mx-auto mb-8">Transformando el cuerpo humano en criaturas poderosas y lienzos vivos.</p>
+                    <a href="videos.html" class="inline-block bg-purple-600 hover:bg-purple-700 text-white font-medium text-xs tracking-widest uppercase px-8 py-4 transition shadow-lg rounded-sm cursor-pointer">Ver Historias y Vídeos</a>
+                </div>
+            </div>
+        </div>
+
+        <section class="max-w-7xl mx-auto px-4 py-16 text-center">
+            <h2 class="font-serif text-2xl uppercase tracking-wider mb-2">Bienvenidos al Arte Corporal</h2>
+            <p class="text-gray-500 text-sm max-w-xl mx-auto mb-6">Explorá nuestra tienda con materiales profesionales testeados para alta duración y fotografía artística.</p>
+            <a href="productos.html" class="inline-block bg-gray-950 hover:bg-gray-800 text-white text-xs uppercase tracking-widest px-6 py-3 rounded-sm transition cursor-pointer">Ir a la Tienda Completa</a>
+        </section>
+    </main>
+
+    <footer class="bg-white border-t border-gray-100 py-6 text-center text-xs text-gray-400 uppercase tracking-widest">
+        &copy; 2026 Body Art Studio. Todos los derechos reservados.
+    </footer>
+
+    <script>
+        // Actualizar contador del carrito
+        const carrito = JSON.parse(localStorage.getItem('carrito-bodyart')) || [];
+        const totalItems = carrito.reduce((acc, item) => acc + item.cantidad, 0);
+        if (totalItems > 0) {
+            const badge = document.getElementById('cart-badge');
+            badge.innerText = totalItems;
+            badge.classList.remove('hidden');
+            badge.classList.add('inline-flex');
+        }
+
+        // Modificar el Navbar según el estado de la sesión
+        function chequearSesionGlobal() {
+            const usuarioLogueado = JSON.parse(localStorage.getItem('usuario-sesion'));
+            if(usuarioLogueado) {
+                document.getElementById('nav-login-text').innerText = usuarioLogueado.email === 'admin@bodyart.com' ? 'Admin' : usuarioLogueado.nombre;
+            }
+        }
+    </script>
+</body>
+</html>

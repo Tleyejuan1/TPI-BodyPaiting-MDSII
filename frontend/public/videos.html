@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Body Art - Videos e Historias oficiales</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0;1&family=Plus+Jakarta+Sans:wght@300;400;600&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .font-serif { font-family: 'Playfair Display', serif; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900 min-h-screen flex flex-col justify-between" onload="renderizarVideosDinamicos()">
+
+    <nav class="bg-white border-b border-gray-100 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center">
+                <div class="flex-shrink-0 flex items-center">
+                    <a href="index.html" class="flex items-center gap-2 cursor-pointer">
+                        <div class="w-12 h-12 rounded-full border-2 border-purple-600 flex items-center justify-center font-bold text-gray-800 text-sm">BODY</div>
+                        <span class="font-serif tracking-widest text-xl font-bold hidden sm:block">ART</span>
+                    </a>
+                </div>
+                <div class="hidden md:flex space-x-8 text-xs font-medium tracking-widest uppercase">
+                    <a href="index.html" class="text-gray-500 hover:text-purple-600 transition">Hogar</a>
+                    <a href="productos.html" class="text-gray-500 hover:text-purple-600 transition">Comercio / Kits</a>
+                    <a href="videos.html" class="text-purple-600 font-bold transition">Vídeos e Historias</a>
+                    <a href="contacto.html" class="text-gray-500 hover:text-purple-600 transition">Contacto y Reservas</a>
+                </div>
+                <div class="flex items-center space-x-6">
+                    <a href="productos.html?ver-carrito=true" class="relative p-2 text-gray-600 hover:text-purple-600 transition cursor-pointer">
+                        <i class="fa-solid fa-shopping-cart text-xl"></i>
+                        <span id="cart-badge" class="absolute -top-1 -right-1 hidden items-center justify-center px-2 py-0.5 text-xs font-bold leading-none text-white bg-purple-600 rounded-full">0</span>
+                    </a>
+                    <a href="login.html" id="nav-login-btn" class="hidden md:flex items-center gap-2 text-xs font-medium tracking-widest uppercase text-gray-600 hover:text-purple-600 border border-gray-300 rounded-full px-4 py-2 hover:border-purple-600 cursor-pointer">
+                        <i class="fa-solid fa-user"></i>
+                        <span id="nav-login-text">Ingresar</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 py-12 flex-grow w-full">
+        <div class="text-center mb-12">
+            <h2 class="font-serif text-3xl tracking-wider uppercase">Porfolio Audiovisual e Historias Cortas</h2>
+            <div class="h-1 w-12 bg-purple-600 mx-auto mt-3"></div>
+            <p class="text-gray-400 text-xs mt-3 italic">Las últimas transformaciones y metamorfosis cargadas por el artista en tiempo real.</p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8" id="contenedor-videos-publicos">
+            </div>
+    </main>
+
+    <footer class="bg-white border-t border-gray-100 py-6 text-center text-xs text-gray-400 uppercase tracking-widest">
+        &copy; 2026 Body Art Studio. Todos los derechos reservados.
+    </footer>
+
+    <script>
+        const carrito = JSON.parse(localStorage.getItem('carrito-bodyart')) || [];
+        const totalItems = carrito.reduce((acc, item) => acc + item.cantidad, 0);
+        if (totalItems > 0) {
+            const badge = document.getElementById('cart-badge');
+            badge.innerText = totalItems; badge.className = "absolute -top-1 -right-1 inline-flex items-center justify-center px-2 py-0.5 text-xs font-bold text-white bg-purple-600 rounded-full";
+        }
+
+        // FUNCIÓN CLAVE: SE ALIMENTA DIRECTAMENTE DE LA MEMORIA DEL PANEL DE ADMINISTRACIÓN
+        function renderizarVideosDinamicos() {
+            const vidsDinamicos = JSON.parse(localStorage.getItem('porfolio-dinamico')) || [];
+            const contenedor = document.getElementById('contenedor-videos-publicos');
+
+            if(vidsDinamicos.length === 0) {
+                contenedor.innerHTML = `<p class="text-sm text-gray-400 italic text-center col-span-2 py-12">No hay videos publicados en este momento.</p>`;
+                return;
+            }
+
+            contenedor.innerHTML = vidsDinamicos.map(v => `
+                <div class="bg-white border border-gray-200 rounded-sm overflow-hidden shadow-xs hover:shadow-md transition">
+                    <div class="aspect-video bg-gray-900 flex items-center justify-center relative">
+                        <div class="absolute inset-0 bg-cover bg-center opacity-60" style="background-image: url('${v.img}')"></div>
+                        <i class="fa-solid fa-play text-white text-5xl z-10 cursor-pointer hover:scale-110 transition p-4 bg-purple-600/20 backdrop-blur-xs rounded-full border border-white/20"></i>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="font-serif text-xl font-bold mb-2 text-gray-900">${v.titulo}</h3>
+                        <p class="text-gray-600 text-sm leading-relaxed">${v.desc}</p>
+                    </div>
+                </div>
+            `).join('');
+
+            chequearSesionGlobal();
+        }
+
+        function chequearSesionGlobal() {
+            const u = JSON.parse(localStorage.getItem('usuario-sesion'));
+            if(u) document.getElementById('nav-login-text').innerText = u.email === 'admin@bodyart.com' ? 'Admin' : u.nombre;
+        }
+    </script>
+</body>
+</html>

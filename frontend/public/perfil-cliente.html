@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Body Art - Perfil Comprador</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0;1&family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .font-serif { font-family: 'Playfair Display', serif; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900 min-h-screen flex flex-col justify-between" onload="initPerfilCliente()">
+
+    <!-- NAVEGACIÓN -->
+    <nav class="bg-white border-b border-gray-100 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center">
+                <div class="flex-shrink-0 flex items-center">
+                    <a href="index.html" class="flex items-center gap-2">
+                        <div class="w-12 h-12 rounded-full border-2 border-purple-600 flex items-center justify-center font-bold text-gray-800 text-sm">BODY</div>
+                        <span class="font-serif tracking-widest text-xl font-bold hidden sm:block">ART</span>
+                    </a>
+                </div>
+                <div class="hidden md:flex space-x-8 text-xs font-medium tracking-widest uppercase">
+                    <a href="index.html" class="text-gray-500 hover:text-purple-600 transition">Hogar</a>
+                    <a href="productos.html" class="text-gray-500 hover:text-purple-600 transition">Comercio / Kits</a>
+                    <a href="videos.html" class="text-gray-500 hover:text-purple-600 transition">Vídeos e Historias</a>
+                </div>
+                <button onclick="cerrarSesion()" class="text-xs font-bold uppercase text-red-600 border px-4 py-2 rounded-full hover:bg-red-50 cursor-pointer">Cerrar Sesión</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-5xl mx-auto px-4 py-12 flex-grow w-full space-y-6 text-xs">
+        <div class="bg-white border border-gray-200 p-6 rounded-sm shadow-sm space-y-6">
+            <div class="border-b pb-4">
+                <h3 class="font-serif text-2xl mb-1 text-gray-900">Tu Espacio Personal de Control</h3>
+                <p class="text-gray-500">Bienvenido, <span id="cliente-nombre" class="font-bold text-gray-800"></span> (<span id="cliente-email"></span>)</p>
+            </div>
+
+            <!-- MONITOR DE COMPRAS -->
+            <div>
+                <h4 class="text-xs font-bold uppercase tracking-widest text-purple-600 mb-3"><i class="fa-solid fa-truck mr-1"></i> Monitoreo de Despachos y Período de Garantía (Regla de 5 Días UTN)</h4>
+                <div id="mis-compras-lista" class="space-y-4"></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- INTERFAZ FLOATING: FORMULARIO DE RECLAMOS COMPRENSIVO (ESTILO MERCADO LIBRE) -->
+    <div id="modal-reclamo-ml" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+        <div class="bg-white border border-gray-200 p-6 max-w-md w-full space-y-4 shadow-2xl text-xs rounded-sm max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b pb-2">
+                <h3 class="font-serif text-sm font-bold uppercase tracking-wider text-red-600"><i class="fa-solid fa-shield-heart mr-1"></i> Central de Disputas & Devoluciones</h3>
+                <button onclick="cerrarModalReclamo()" class="text-gray-400 hover:text-gray-600 cursor-pointer"><i class="fa-solid fa-xmark text-sm"></i></button>
+            </div>
+            
+            <p class="text-gray-500 leading-relaxed">¿Tuviste un problema con tu kit de insumos corporativos? Completá los campos para iniciar la mediación oficial con el vendedor.</p>
+            
+            <div class="space-y-3 pt-2">
+                <!-- 1. RESOLUCIÓN SOLICITADA -->
+                <div>
+                    <label class="block font-bold text-gray-700 uppercase mb-1">¿Qué solución preferís?</label>
+                    <select id="reclamo-resolucion" class="w-full border border-gray-300 p-2.5 rounded-sm bg-white font-medium focus:border-purple-600">
+                        <option value="dinero">Quiero la devolución total de mi dinero (Reembolso)</option>
+                        <option value="cambio">Quiero cambiar los productos por un error/falla (Reenvío)</option>
+                    </select>
+                </div>
+
+                <!-- 2. MOTIVOS ESTILO MERCADO LIBRE -->
+                <div>
+                    <label class="block font-bold text-gray-700 uppercase mb-1">Motivo del Reclamo</label>
+                    <select id="reclamo-motivo" class="w-full border border-gray-300 p-2.5 rounded-sm bg-white font-medium focus:border-purple-600">
+                        <option value="Arrepentimiento de compra">Me arrepentí de la compra</option>
+                        <option value="Error de compra">Compré el modelo equivocado / Error de selección</option>
+                        <option value="Malas condiciones">El producto llegó roto, abierto o dañado (Malas condiciones)</option>
+                        <option value="Incompleto">Faltan piezas o insumos dentro del empaque original</option>
+                        <option value="Diferente a la descripción">Es totalmente distinto a las fotos o descripción de la web</option>
+                    </select>
+                </div>
+
+                <!-- 3. DESCRIPCIÓN EXPLICATIVA -->
+                <div>
+                    <label class="block font-bold text-gray-700 uppercase mb-1">Explicá en detalle lo sucedido</label>
+                    <textarea id="reclamo-descripcion" placeholder="Contanos qué pasó con el pedido para agilizar el análisis del auditor corporativo..." class="w-full border border-gray-300 p-2 rounded-sm bg-white h-24 focus:outline-none focus:border-purple-600"></textarea>
+                </div>
+
+                <!-- 4. ADJUNTAR IMÁGENES EN VIVO -->
+                <div>
+                    <label class="block font-bold text-gray-700 uppercase mb-1"><i class="fa-solid fa-camera mr-1 text-purple-600"></i> Adjuntar evidencia fotográfica (Opcional)</label>
+                    <input type="file" id="reclamo-foto" accept="image/*" class="w-full text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-sm file:border-0 file:text-xs file:font-bold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100 cursor-pointer">
+                    <p class="text-[10px] text-gray-400 mt-1">Subí la foto del estado de las tintas, agujas o cajas rotas.</p>
+                </div>
+            </div>
+
+            <div class="flex gap-2 pt-2 justify-end font-bold">
+                <button onclick="cerrarModalReclamo()" class="border px-4 py-2 text-gray-500 hover:bg-gray-50 rounded-sm cursor-pointer">Cancelar</button>
+                <button onclick="procesarEnvioReclamoCliente()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-sm cursor-pointer">Enviar Disputa</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-white border-t border-gray-100 py-6 text-center text-xs text-gray-400 uppercase tracking-widest">
+        &copy; 2026 Body Art Studio. Todos los derechos reservados.
+    </footer>
+
+    <script>
+        let idPedidoParaReclamo = null;
+        let fotoBase64Cargada = "";
+
+        function initPerfilCliente() {
+            const sesion = JSON.parse(localStorage.getItem('usuario-sesion'));
+            if(!sesion || sesion.rol !== 'USER') { window.location.href = 'login.html'; return; }
+
+            document.getElementById('cliente-nombre').innerText = sesion.nombre;
+            document.getElementById('cliente-email').innerText = sesion.email;
+            
+            // Listener para convertir la foto subida en Base64 de forma transparente
+            setupLectorDeImagenes();
+            cargarPedidosCliente(sesion.email);
+        }
+
+        function setupLectorDeImagenes() {
+            const inputElement = document.getElementById('reclamo-foto');
+            if (inputElement) {
+                inputElement.addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(event) {
+                            fotoBase64Cargada = event.target.result; // Imagen lista en string de texto
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+            }
+        }
+
+        function cargarPedidosCliente(email) {
+            const todosPedidos = JSON.parse(localStorage.getItem('global-pedidos')) || [];
+            const misP = todosPedidos.filter(p => p.clienteEmail === email);
+            
+            document.getElementById('mis-compras-lista').innerHTML = misP.map(p => {
+                let bloqueAccionReclamo = "";
+
+                // Nota/Resolución del administrador si existe
+                let bloqueMotivoAdmin = p.motivoAdmin ? `
+                    <div class="mt-2 p-2 bg-purple-50 border border-purple-100 rounded-sm text-gray-700">
+                        <strong>Resolución Corporativa del Vendedor:</strong> ${p.motivoAdmin}
+                    </div>
+                ` : "";
+
+                // Si el reclamo está abierto, mostramos la ficha técnica que envió el cliente para su control
+                let bloqueDetalleMiReclamo = p.reclamoCliente ? `
+                    <div class="mt-2 p-3 bg-red-50/60 border border-red-100 rounded-sm text-gray-700 space-y-1">
+                        <p class="font-bold text-red-700 uppercase tracking-wider text-[10px]"><i class="fa-solid fa-gavel"></i> Tu Disputa en análisis:</p>
+                        <p>• <strong>Compensación solicitada:</strong> ${p.reclamoCliente.resolucion === 'dinero' ? 'Reembolso Monetario' : 'Cambio Físico de Mercadería'}</p>
+                        <p>• <strong>Motivo Mercado Libre:</strong> ${p.reclamoCliente.motivo}</p>
+                        <p>• <strong>Tu descripción técnica:</strong> "${p.reclamoCliente.descripcion}"</p>
+                        ${p.reclamoCliente.foto ? `
+                            <div class="mt-2">
+                                <p class="font-bold text-[10px] text-gray-400 uppercase mb-1">Evidencia adjuntada:</p>
+                                <img src="${p.reclamoCliente.foto}" class="w-24 h-24 object-cover border border-gray-300 rounded-sm hover:scale-105 transition cursor-zoom-in">
+                            </div>
+                        ` : ""}
+                    </div>
+                ` : "";
+
+                if(p.estado === "Entregado") {
+                    bloqueAccionReclamo = `
+                        <div class="mt-3 p-3 bg-amber-50 border border-amber-100 rounded-sm flex justify-between items-center">
+                            <span class="text-amber-800"><i class="fa-solid fa-clock mr-1"></i> Tenés 5 días hábiles para iniciar una queja por error o falla.</span>
+                            <button onclick="abrirModalReclamoML('${p.id}')" class="bg-amber-600 hover:bg-amber-700 text-white text-[10px] font-bold uppercase px-3 py-1.5 rounded-sm transition cursor-pointer">Iniciar Reclamo / Devolución</button>
+                        </div>
+                    `;
+                } else if(p.estado.includes("Reclamo Abierto")) {
+                    bloqueAccionReclamo = `
+                        <div class="mt-3 p-3 bg-red-50 border border-red-100 text-red-700 rounded-sm font-medium">
+                            <i class="fa-solid fa-circle-notch animate-spin mr-1"></i> Estado Mercado Libre: <strong>Disputa en Mediación</strong>. El vendedor de Villa María está analizando tus fotos y descripciones para liquidar el caso.
+                        </div>
+                    `;
+                } else if(p.estado === "Finalizado (Plazo Expirado)") {
+                    bloqueAccionReclamo = `
+                        <div class="mt-3 p-2 bg-gray-100 border border-gray-200 text-gray-500 rounded-sm italic">
+                            ✓ Operación finalizada de forma automática tras cumplirse el período reglamentario de 5 días hábiles sin incidencias.
+                        </div>
+                    `;
+                }
+
+                return `
+                    <div class="border p-4 bg-white rounded-sm shadow-2xs border-gray-200">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b pb-2 gap-2">
+                            <div>
+                                <span class="font-bold text-purple-600 text-sm">${p.id}</span> — <span class="text-gray-400 font-medium">${p.fecha}</span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="font-bold text-base text-gray-900">$${p.total.toLocaleString('es-AR')}</span>
+                                <span class="px-2 py-0.5 rounded-sm font-bold bg-purple-100 text-purple-800 uppercase text-[10px] tracking-wider">${p.estado}</span>
+                            </div>
+                        </div>
+                        <p class="font-bold text-gray-800 mt-2 text-sm">${p.detalle}</p>
+                        <p class="text-gray-500 mt-1"><i class="fa-solid fa-location-dot text-purple-600 mr-1"></i> <strong>Destino de entrega:</strong> ${p.destino} | Pago: ${p.metodo}</p>
+                        <p class="text-gray-400 font-mono mt-0.5 font-bold">Guía Andreani: <span class="text-blue-600">${p.tracking}</span></p>
+                        
+                        ${bloqueDetalleMiReclamo}
+                        ${bloqueMotivoAdmin}
+                        ${bloqueAccionReclamo}
+                    </div>
+                `;
+            }).join('') || `<p class="text-gray-400 italic">No tenés compras registradas en esta cuenta.</p>`;
+        }
+
+        // CONTROLADORES DE LA INTERFAZ FLOTANTE
+        function abrirModalReclamoML(id) {
+            idPedidoParaReclamo = id;
+            fotoBase64Cargada = ""; 
+            document.getElementById('reclamo-descripcion').value = "";
+            document.getElementById('reclamo-foto').value = "";
+            document.getElementById('modal-reclamo-ml').classList.remove('hidden');
+        }
+
+        function cerrarModalReclamo() {
+            document.getElementById('modal-reclamo-ml').classList.add('hidden');
+            idPedidoParaReclamo = null;
+        }
+
+        function procesarEnvioReclamoCliente() {
+            const res = document.getElementById('reclamo-resolucion').value;
+            const mot = document.getElementById('reclamo-motivo').value;
+            const desc = document.getElementById('reclamo-descripcion').value.trim();
+
+            if (!desc) { alert('Por favor, detallá el porqué del reclamo en el cuadro de descripción.'); return; }
+
+            let pedidos = JSON.parse(localStorage.getItem('global-pedidos')) || [];
+            const orden = pedidos.find(p => p.id === idPedidoParaReclamo);
+
+            if (orden) {
+                // Inyectamos el objeto estructurado con las opciones tipo Mercado Libre + la foto comprimida en base64
+                orden.estado = `Reclamo Abierto - Esperando Resolución (${res === 'dinero' ? 'Reembolso' : 'Cambio'})`;
+                orden.reclamoCliente = {
+                    resolucion: res,
+                    motivo: mot,
+                    descripcion: desc,
+                    foto: fotoBase64Cargada || null
+                };
+
+                localStorage.setItem('global-pedidos', JSON.stringify(pedidos));
+                alert(`¡Disputa abierta bajo el motivo: "${mot}"!\nEl vendedor revisará tus pruebas e imágenes desde la consola de control.`);
+                cerrarModalReclamo();
+                cargarPedidosCliente(orden.clienteEmail);
+            }
+        }
+
+        function cerrarSesion() { localStorage.removeItem('usuario-sesion'); window.location.href = 'index.html'; }
+    </script>
+</body>
+</html>

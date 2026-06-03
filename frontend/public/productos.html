@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Body Art - Catálogo de Insumos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0;1&family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .font-serif { font-family: 'Playfair Display', serif; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900 min-h-screen flex flex-col justify-between" onload="initPantallaProductos()">
+
+    <nav class="bg-white border-b border-gray-100 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center">
+                <div class="flex-shrink-0 flex items-center">
+                    <a href="index.html" class="flex items-center gap-2 cursor-pointer">
+                        <div class="w-12 h-12 rounded-full border-2 border-purple-600 flex items-center justify-center font-bold text-gray-800 text-sm">BODY</div>
+                        <span class="font-serif tracking-widest text-xl font-bold hidden sm:block">ART</span>
+                    </a>
+                </div>
+                <div class="hidden md:flex space-x-8 text-xs font-medium tracking-widest uppercase">
+                    <a href="index.html" class="text-gray-500 hover:text-purple-600 transition">Hogar</a>
+                    <a href="productos.html" class="text-purple-600 font-bold transition">Comercio / Kits</a>
+                    <a href="videos.html" class="text-gray-500 hover:text-purple-600 transition">Vídeos e Historias</a>
+                    <a href="contacto.html" class="text-gray-500 hover:text-purple-600 transition">Contacto y Reservas</a>
+                </div>
+                <div class="flex items-center space-x-6">
+                    <a href="checkout.html" class="relative p-2 text-gray-600 hover:text-purple-600 transition cursor-pointer">
+                        <i class="fa-solid fa-shopping-cart text-xl"></i>
+                        <span id="cart-badge" class="hidden">0</span>
+                    </a>
+                    <a href="login.html" id="nav-login-btn" class="hidden md:flex items-center gap-2 text-xs font-medium tracking-widest uppercase text-gray-600 hover:text-purple-600 border border-gray-300 rounded-full px-4 py-2 hover:border-purple-600 cursor-pointer">
+                        <i class="fa-solid fa-user"></i>
+                        <span id="nav-login-text">Ingresar</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
+        <div class="text-center mb-12">
+            <h2 class="font-serif text-3xl tracking-wider uppercase">Insumos y Kits de Arte Corporal</h2>
+            <div class="h-1 w-12 bg-purple-600 mx-auto mt-3"></div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8" id="lista-productos"></div>
+    </main>
+
+    <footer class="bg-white border-t border-gray-100 py-6 text-center text-xs text-gray-400 uppercase tracking-widest">
+        &copy; 2026 Body Art Studio. Todos los derechos reservados.
+    </footer>
+
+    <script src="carrito-service.js"></script>
+    <script src="producto-service.js"></script>
+
+    <script>
+        function initPantallaProductos() {
+            let catalogoDinamico = JSON.parse(localStorage.getItem('catalogo-dinamico'));
+            
+            // Si el almacenamiento local está vacío o desactualizado, creamos la estructura base inicial
+            if (!catalogoDinamico || catalogoDinamico.length === 0 || catalogoDinamico[0].codigo === "PIN-01") {
+                catalogoDinamico = [
+                    { id: 1, codigo: "PIN-RED", nombre: "Pintura FX - Rojo Intenso (100ml)", desc: "Pintura profesional hipoalergénica de alta densidad.", precio: 450, img: "" },
+                    { id: 2, codigo: "PIN-BLU", nombre: "Pintura FX - Azul Francia (100ml)", desc: "Ideal para bases uniformes y degradés artísticos intensos.", precio: 450, img: "" },
+                    { id: 3, codigo: "PIN-BLK", nombre: "Pintura FX - Negro Absoluto (100ml)", desc: "Máxima opacidad para líneas de contorno y sombreados FX.", precio: 490, img: "" },
+                    { id: 4, codigo: "PNC-02", nombre: "Pincel de Detalle Liner N°2", desc: "Pelo sintético de alta precisión para trazos finos.", precio: 300, img: "" },
+                    { id: 5, codigo: "PNC-08", nombre: "Pincel Chato para Fondos N°8", desc: "Cerdas suaves ideales para cubrir grandes superficies rápido.", precio: 380, img: "" },
+                    { id: 6, codigo: "GLI-GLD", nombre: "Gliter Cosmético Destello - Oro", desc: "Brillo premium aprobado para uso dermatológico en rostro.", precio: 350, img: "" },
+                    { id: 7, codigo: "ESP-STP", nombre: "Esponja de Stippling (Efectos)", desc: "Textura abierta para simular barbas, raspaduras y heridas.", precio: 220, img: "" },
+                    { id: 8, codigo: "STN-GEO", nombre: "Plantilla Stencil - Geométricos", desc: "Lámina flexible lavable con patrones geométricos abstractos.", precio: 280, img: "" },
+                    { id: 9, codigo: "COM-PLT", nombre: "Compotera Plástica de Mezcla", desc: "Paleta con 6 cavidades profundas para diluir y mezclar tintas.", precio: 190, img: "" },
+                    // Kits
+                    { id: 10, codigo: "KIT-START-FX", nombre: "Pack Iniciación Corporal", desc: "Contiene: Pintura Roja + Azul + Pincel N°2 + Compotera Mezcladora.", precio: 1100, img: "" },
+                    { id: 11, codigo: "KIT-PRO-GLAM", nombre: "Combo Glitter & Efectos Pro", desc: "Contiene: Pintura Negra + Pincel N°8 + Glitter Oro + Esponja Stippling.", precio: 1400, img: "" }
+                ];
+                localStorage.setItem('catalogo-dinamico', JSON.stringify(catalogoDinamico));
+            }
+
+            // 🛠️ GRILLA DE ENLACES FIJOS: Reemplazá acá adentro las URLs que quieras cambiar.
+            // Al recargar, estas imágenes van a pisar de prepo a la memoria vieja.
+            const urlsFijasDelCodigo = [
+                "https://tse3.mm.bing.net/th/id/OIP.SvH2F-dpljdZcvG98fsJ_wAAAA?pid=Api&P=0&h=180", // Foto 1: Pintura Roja (Cambiá este link si querés)
+                "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=500&q=80", // Foto 2: Pintura Azul
+                "https://images.unsplash.com/photo-1516979187457-637abb4f9353?w=500&q=80", // Foto 3: Pintura Negra
+                "https://images.unsplash.com/photo-1515688594390-b649af70d282?w=500&q=80", // Foto 4: Pincel N°2
+                "https://images.unsplash.com/photo-1512496015851-a90fb38ba796?w=500&q=80", // Foto 5: Pincel N°8
+                "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=500&q=80", // Foto 6: Glitter Oro
+                "https://images.unsplash.com/photo-1604654894610-df490651e133?w=500&q=80", // Foto 7: Esponja Efectos
+                "https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=500&q=80", // Foto 8: Stencil
+                "https://images.unsplash.com/photo-1608248597481-496100c8c836?w=500&q=80", // Foto 9: Compotera
+                "https://images.unsplash.com/photo-1526045612212-70caf35c14df?w=500&q=80", // Foto 10: Kit Inicio
+                "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=500&q=80"  // Foto 11: Kit Glam Pro
+            ];
+
+            // Sincronizamos las fotos del código directamente sobre el catálogo antes de dibujar
+            catalogoDinamico.forEach((prod, index) => {
+                if (urlsFijasDelCodigo[index]) {
+                    prod.img = urlsFijasDelCodigo[index];
+                }
+            });
+            localStorage.setItem('catalogo-dinamico', JSON.stringify(catalogoDinamico));
+
+            // Sincronización transparente con el admin-dashboard
+            if (typeof ProductoService !== 'undefined') {
+                localStorage.setItem('global-inventario', JSON.stringify({ productosSimples: catalogoDinamico.slice(0,9), kits: catalogoDinamico.slice(9) }));
+            }
+
+            // Renderización exacta con tu CSS, espaciados y diseño de tarjetas original
+            document.getElementById('lista-productos').innerHTML = catalogoDinamico.map(prod => `
+                <div class="bg-white border border-gray-100 rounded-sm overflow-hidden p-6 flex flex-col justify-between hover:shadow-md transition shadow-xs">
+                    <div>
+                        <div class="h-48 bg-gray-100 mb-4 overflow-hidden rounded-sm">
+                            <img src="${prod.img}" class="w-full h-full object-cover">
+                        </div>
+                        <div class="flex justify-between items-start mb-1">
+                            <h3 class="font-medium text-lg text-gray-900">${prod.nombre}</h3>
+                            <span class="text-[10px] font-mono text-purple-600 bg-purple-50 px-1.5 py-0.5 rounded-sm font-bold uppercase">${prod.codigo}</span>
+                        </div>
+                        <p class="text-gray-500 text-sm mb-4">${prod.desc}</p>
+                    </div>
+                    <div>
+                        <div class="text-xl font-bold mb-4 text-gray-900">$${prod.precio.toLocaleString('es-AR')}</div>
+                        <button onclick="comprarItem(${prod.id})" class="w-full bg-gray-900 hover:bg-purple-600 text-white text-xs uppercase tracking-widest py-3 transition cursor-pointer rounded-sm">Añadir al carrito</button>
+                    </div>
+                </div>
+            `).join('');
+
+            if (typeof CarritoService !== 'undefined' && CarritoService.actualizarBadgesNavbar) {
+                CarritoService.actualizarBadgesNavbar();
+            }
+            chequearSesionGlobal();
+        }
+
+        function comprarItem(id) {
+            if (typeof CarritoService !== 'undefined' && CarritoService.agregar) {
+                CarritoService.agregar(id);
+            }
+        }
+
+        function chequearSesionGlobal() {
+            const u = JSON.parse(localStorage.getItem('usuario-sesion'));
+            if(u) {
+                const txt = u.email === 'admin@bodyart.com' || u.rol === 'ADMIN' ? 'Admin' : u.nombre;
+                document.getElementById('nav-login-text').innerText = txt;
+            }
+        }
+    </script>
+</body>
+</html>

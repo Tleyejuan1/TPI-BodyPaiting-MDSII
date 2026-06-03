@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Body Art - Pasarela de Pago Oficial</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0;1&family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .font-serif { font-family: 'Playfair Display', serif; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900 min-h-screen flex flex-col justify-between" onload="initPasarelaCheckout()">
+
+    <!-- BARRA DE NAVEGACIÓN -->
+    <nav class="bg-white border-b border-gray-100 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center">
+                <div class="flex-shrink-0 flex items-center">
+                    <a href="index.html" class="flex items-center gap-2 cursor-pointer">
+                        <div class="w-12 h-12 rounded-full border-2 border-purple-600 flex items-center justify-center font-bold text-gray-800 text-sm">BODY</div>
+                        <span class="font-serif tracking-widest text-xl font-bold hidden sm:block">ART</span>
+                    </a>
+                </div>
+                <div class="hidden md:flex space-x-8 text-xs font-medium tracking-widest uppercase">
+                    <a href="index.html" class="text-gray-500 hover:text-purple-600 transition">Hogar</a>
+                    <a href="productos.html" class="text-gray-500 hover:text-purple-600 transition">Comercio / Kits</a>
+                    <a href="videos.html" class="text-gray-500 hover:text-purple-600 transition">Vídeos e Historias</a>
+                </div>
+                <div>
+                    <a href="productos.html" class="text-xs font-bold uppercase text-purple-600 tracking-wider">&larr; Seguir comprando</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <!-- DETALLE DEL CARRITO (Columna Izquierda) -->
+        <div class="bg-white border border-gray-200 rounded-sm p-6 shadow-sm lg:col-span-2 space-y-6">
+            <h2 class="font-serif text-2xl uppercase tracking-wider border-b pb-4"><i class="fa-solid fa-shopping-bag mr-2 text-purple-600"></i>Revisión de tu Pedido</h2>
+            
+            <div id="items-checkout" class="space-y-4 divide-y divide-gray-100"></div>
+            
+            <!-- CONTENEDOR CUPONES (Módulo Externo) -->
+            <div class="bg-gray-50 p-4 rounded-sm space-y-2 border border-gray-100">
+                <p class="text-xs font-bold uppercase tracking-wider text-gray-600">¿Tenés un cupón de descuento de la empresa?</p>
+                <div class="flex gap-2">
+                    <input type="text" id="input-cupon" placeholder="CÓDIGO" class="border border-gray-300 p-2 bg-white text-xs rounded-sm uppercase font-mono tracking-widest w-48 focus:outline-none focus:border-purple-600">
+                    <button onclick="ejecutarValidacionCupon()" class="bg-gray-900 hover:bg-purple-600 text-white text-[11px] font-bold uppercase tracking-wider px-4 py-2 transition rounded-sm cursor-pointer">Aplicar</button>
+                </div>
+                <div id="msg-cupon" class="text-xs font-medium hidden"></div>
+            </div>
+
+            <!-- PRECIOS FINALES -->
+            <div class="text-right font-medium text-gray-700 pt-4 border-t space-y-1 text-xs">
+                <div>Subtotal Neto: <span id="subtotal-neto" class="font-bold text-gray-600">$0</span></div>
+                <div class="text-red-600 hidden" id="fila-descuento">Beneficio Cupón: -<span id="monto-descuento">$0</span></div>
+                <div class="text-2xl font-serif text-gray-900 pt-2">Total a Liquidar: <span id="total-precio" class="font-bold text-purple-600">$0</span></div>
+            </div>
+        </div>
+
+        <!-- LOGÍSTICA DE DESPACHO Y FORMULARIO DE TARJETA (Columna Derecha) -->
+        <div class="bg-white border border-gray-200 rounded-sm p-6 shadow-sm space-y-6 h-fit text-xs">
+            <h3 class="text-xs font-bold uppercase tracking-widest text-gray-400 border-b pb-2">Despacho & Facturación</h3>
+            
+            <!-- DIRECCIONES -->
+            <div class="space-y-2">
+                <label class="block font-bold text-gray-700 uppercase">Destino de la Encomienda</label>
+                <select id="selector-direccion" onchange="manejarCambioDireccion()" class="w-full border border-gray-300 p-2.5 rounded-sm bg-white text-xs focus:border-purple-600">
+                    <option value="guardada">Enviar a mi Dirección Predefinida</option>
+                    <option value="nueva">Registrar otra Dirección de Despacho...</option>
+                </select>
+                <div id="caja-dir-guardada" class="bg-gray-50 border border-gray-200 p-3 text-gray-600 rounded-sm"></div>
+                
+                <!-- FORMULARIO NUEVA DIRECCIÓN COMPLETO -->
+                <div id="campos-dir-nueva" class="hidden space-y-2 p-3 bg-purple-50/40 border border-purple-100 rounded-sm">
+                    <input type="text" id="new-pais" placeholder="País (Ej: Argentina)" class="w-full border border-gray-300 p-2 bg-white rounded-sm">
+                    <input type="text" id="new-provincia" placeholder="Provincia (Ej: Córdoba)" class="w-full border border-gray-300 p-2 bg-white rounded-sm">
+                    <input type="text" id="new-localidad" placeholder="Localidad (Ej: Villa María)" class="w-full border border-gray-300 p-2 bg-white rounded-sm">
+                    <div class="grid grid-cols-3 gap-2">
+                        <input type="text" id="new-calle" placeholder="Calle" class="col-span-2 border border-gray-300 p-2 bg-white rounded-sm">
+                        <input type="text" id="new-nro" placeholder="Nro" class="border border-gray-300 p-2 bg-white rounded-sm">
+                    </div>
+                </div>
+            </div>
+
+            <!-- MÉTODOS DE PAGO -->
+            <div class="space-y-2">
+                <label class="block font-bold text-gray-700 uppercase">Canal de Pago autorizado</label>
+                <div class="space-y-2">
+                    <label class="flex items-center gap-2 p-2.5 border rounded-sm bg-white cursor-pointer hover:bg-gray-50"><input type="radio" name="metodo-pago" value="Mercado Pago" checked onchange="manejarCambioTarjeta()"><span>Mercado Pago</span></label>
+                    <label class="flex items-center gap-2 p-2.5 border rounded-sm bg-white cursor-pointer hover:bg-gray-50"><input type="radio" name="metodo-pago" value="Efectivo (Rapipago / PagoFácil)" onchange="manejarCambioTarjeta()"><span>Efectivo (Rapipago / PagoFácil)</span></label>
+                    <label class="flex items-center gap-2 p-2.5 border rounded-sm bg-white cursor-pointer hover:bg-gray-50"><input type="radio" name="metodo-pago" value="Tarjeta" onchange="manejarCambioTarjeta()"><span>Tarjeta de Débito / Crédito</span></label>
+                </div>
+
+                <!-- FORMULARIO DETALLADO DE TARJETA NUEVA -->
+                <div id="campos-tarjeta-nueva" class="hidden space-y-2 p-3 bg-gray-50 border border-gray-200 rounded-sm">
+                    <p class="text-[10px] font-bold uppercase text-purple-600 mb-1"><i class="fa-solid fa-credit-card mr-1"></i> Formulario de Carga de Tarjeta Nueva</p>
+                    <div>
+                        <label class="block text-[9px] uppercase tracking-wider text-gray-400 font-bold mb-0.5">Número de Tarjeta</label>
+                        <input type="text" id="card-number" placeholder="0000 0000 0000 0000" class="w-full border border-gray-300 p-2 bg-white rounded-sm font-mono text-xs">
+                    </div>
+                    <div>
+                        <label class="block text-[9px] uppercase tracking-wider text-gray-400 font-bold mb-0.5">Nombre completo del Titular</label>
+                        <input type="text" id="card-name" placeholder="JUAN CRUZ TLEYE" class="w-full border border-gray-300 p-2 bg-white rounded-sm uppercase text-xs">
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-[9px] uppercase tracking-wider text-gray-400 font-bold mb-0.5">Vencimiento</label>
+                            <input type="text" id="card-expiry" placeholder="MM/AA" class="w-full border border-gray-300 p-2 bg-white rounded-sm text-center text-xs">
+                        </div>
+                        <div>
+                            <label class="block text-[9px] uppercase tracking-wider text-gray-400 font-bold mb-0.5">CVC (Cód. Seguridad)</label>
+                            <input type="text" id="card-cvc" placeholder="000" class="w-full border border-gray-300 p-2 bg-white rounded-sm text-center text-xs">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="ejecutarCompraFinalCheckout()" class="w-full bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold uppercase tracking-widest py-4 transition rounded-sm shadow-md cursor-pointer">Finalizar Operación</button>
+        </div>
+    </main>
+
+    <footer class="bg-white border-t border-gray-100 py-6 text-center text-xs text-gray-400 uppercase tracking-widest">
+        &copy; 2026 Body Art Studio. Todos los derechos reservados.
+    </footer>
+
+    <!-- INYECCIÓN DE LA CAPA DE SERVICIOS INDEPENDIENTES -->
+    <script src="carrito-service.js"></script>
+    <script src="cupon-service.js"></script>
+    <script src="mail-service.js"></script>
+
+    <script>
+        let descuentoAplicado = 0;
+        let cuponCodigoActivo = "";
+        const usuarioSesion = JSON.parse(localStorage.getItem('usuario-sesion'));
+
+        function initPasarelaCheckout() {
+            renderizarItemsCheckout();
+            
+            const cajaDir = document.getElementById('caja-dir-guardada');
+            if(usuarioSesion && usuarioSesion.direccion && usuarioSesion.direccion.calle) {
+                const d = usuarioSesion.direccion;
+                cajaDir.innerHTML = `<p class="mt-1">${d.calle} ${d.nro}, ${d.localidad} (${d.provincia})</p>`;
+            } else {
+                cajaDir.innerHTML = `<p class="text-amber-600 italic">No hay dirección predefinida.</p>`;
+                document.getElementById('selector-direccion').value = "nueva"; manejarCambioDireccion();
+            }
+
+            // ESCUCHADORES AUTOMÁTICOS PARA LAS MÁSCARAS DE LA TARJETA
+            configurarMascarasTarjeta();
+        }
+
+        // FUNCIÓN UX: Formatea MM/AA con barra automática y limita el CVC a 3 dígitos estrictos
+        function configurarMascarasTarjeta() {
+            const inputVencimiento = document.getElementById('card-expiry');
+            const inputCVC = document.getElementById('card-cvc');
+
+            if (inputVencimiento) {
+                inputVencimiento.addEventListener('input', function(e) {
+                    let valor = e.target.value.replace(/\D/g, ""); // Borrar letras
+                    if (valor.length === 1 && valor > 1) {
+                        valor = "0" + valor; // Auto-cero para meses de un dígito altos (ej: 5 -> 05)
+                    }
+                    if (valor.length > 2) {
+                        valor = valor.substring(0, 2) + "/" + valor.substring(2, 4); // Clavar barra divisional
+                    }
+                    e.target.value = valor;
+                });
+            }
+
+            if (inputCVC) {
+                inputCVC.addEventListener('input', function(e) {
+                    let valor = e.target.value.replace(/\D/g, ""); // Dejar solo números
+                    if (valor.length > 3) {
+                        valor = valor.substring(0, 3); // Corte estricto en 3 caracteres
+                    }
+                    e.target.value = valor;
+                });
+            }
+        }
+
+        function renderizarItemsCheckout() {
+            const carrito = CarritoService.obtain ? CarritoService.obtain() : CarritoService.obtener();
+            const contenedor = document.getElementById('items-checkout');
+            
+            if (carrito.length === 0) {
+                contenedor.innerHTML = `<p class="text-gray-400 text-sm text-center py-8">No hay ítems cargados en la sesión del carrito.</p>`;
+                document.getElementById('total-precio').innerText = "$0";
+                document.getElementById('subtotal-neto').innerText = "$0";
+                return;
+            }
+
+            contenedor.innerHTML = carrito.map(item => `
+                <div class="flex items-center justify-between py-4 first:pt-0">
+                    <div>
+                        <h4 class="font-medium text-gray-900 text-sm">${item.nombre}</h4>
+                        <p class="text-gray-500 text-xs">${item.cantidad} unidades x $${item.precio.toLocaleString('es-AR')}</p>
+                    </div>
+                    <div class="flex items-center gap-6">
+                        <span class="font-bold text-gray-900">$${(item.precio * item.cantidad).toLocaleString('es-AR')}</span>
+                        <button onclick="removerItemCheckout(${item.id})" class="text-gray-400 hover:text-red-600 transition cursor-pointer p-1"><i class="fa-solid fa-trash-can"></i></button>
+                    </div>
+                </div>
+            `).join('');
+
+            const subtotal = CarritoService.calcularSubtotal();
+            document.getElementById('subtotal-neto').innerText = `$${subtotal.toLocaleString('es-AR')}`;
+            
+            if (descuentoAplicado > 0) {
+                document.getElementById('fila-descuento').classList.remove('hidden');
+                document.getElementById('monto-descuento').innerText = `$${descuentoAplicado.toLocaleString('es-AR')}`;
+            } else {
+                document.getElementById('fila-descuento').classList.add('hidden');
+            }
+            document.getElementById('total-precio').innerText = `$${(subtotal - descuentoAplicado).toLocaleString('es-AR')}`;
+        }
+
+        function removerItemCheckout(id) {
+            CarritoService.remover(id);
+            descuentoAplicado = 0; cuponCodigoActivo = "";
+            document.getElementById('msg-cupon').classList.add('hidden');
+            renderizarItemsCheckout();
+        }
+
+        function ejecutarValidacionCupon() {
+            const cod = document.getElementById('input-cupon').value;
+            const subtotal = CarritoService.calcularSubtotal();
+            
+            const res = CuponService.validarCupon(cod, subtotal);
+            const msg = document.getElementById('msg-cupon');
+            msg.className = "text-xs font-medium block"; msg.innerText = res.msg;
+
+            if(res.valido) {
+                descuentoAplicado = res.monto; cuponCodigoActivo = cod.toUpperCase().trim();
+            } else {
+                descuentoAplicado = 0; cuponCodigoActivo = "";
+            }
+            renderizarItemsCheckout();
+        }
+
+        function manejarCambioDireccion() {
+            const op = document.getElementById('selector-direccion').value;
+            document.getElementById('campos-dir-nueva').className = op === 'nueva' ? 'space-y-2 p-3 bg-purple-50/40 border border-purple-100 rounded-sm mt-2' : 'hidden';
+            document.getElementById('caja-dir-guardada').className = op === 'guardada' ? 'bg-gray-50 border border-gray-200 p-3 text-gray-600 rounded-sm mt-2' : 'hidden';
+        }
+
+        function manejarCambioTarjeta() {
+            const met = document.querySelector('input[name="metodo-pago"]:checked').value;
+            document.getElementById('campos-tarjeta-nueva').className = met === 'Tarjeta' ? 'space-y-2 p-3 bg-gray-50 border border-gray-200 rounded-sm mt-2' : 'hidden';
+        }
+
+        function ejecutarCompraFinalCheckout() {
+            const carrito = CarritoService.obtain ? CarritoService.obtain() : CarritoService.obtener();
+            if(carrito.length === 0) return;
+
+            const mailComprador = usuarioSesion ? usuarioSesion.email : "comprador@utn.com";
+            const nomComprador = usuarioSesion ? usuarioSesion.nombre : "Comprador Express";
+            const met = document.querySelector('input[name="metodo-pago"]:checked').value;
+            const opEnvio = document.getElementById('selector-direccion').value;
+            
+            let destinoFinal = "";
+            if (opEnvio === 'guardada' && usuarioSesion && usuarioSesion.direccion && usuarioSesion.direccion.calle) {
+                const d = usuarioSesion.direccion; destinoFinal = `${d.calle} ${d.nro}, ${d.localidad}`;
+            } else {
+                const loc = document.getElementById('new-localidad').value.trim();
+                const cal = document.getElementById('new-calle').value.trim();
+                if(!loc || !cal) { alert('Completá la nueva dirección.'); return; }
+                destinoFinal = `${cal}, ${loc}`;
+            }
+
+            // VALIDACIONES DEL FORMULARIO DE TARJETA ACTUALIZADAS
+            if(met === 'Tarjeta') {
+                const num = document.getElementById('card-number').value.trim();
+                const titular = document.getElementById('card-name').value.trim();
+                const exp = document.getElementById('card-expiry').value.trim();
+                const cvc = document.getElementById('card-cvc').value.trim();
+                
+                if(!num || !titular || !exp || !cvc) { 
+                    alert('Completá todos los campos de la tarjeta nueva para simular la pasarela.'); 
+                    return; 
+                }
+                
+                if(exp.length < 5) {
+                    alert('Por favor, ingresá una fecha de vencimiento válida con el formato MM/AA.');
+                    return;
+                }
+
+                if(cvc.length !== 3) {
+                    alert('El código de seguridad (CVC) debe tener exactamente 3 números.');
+                    return;
+                }
+            }
+
+            if(cuponCodigoActivo) {
+                CuponService.marcarComoUsado(cuponCodigoActivo);
+            }
+
+            let catalogo = JSON.parse(localStorage.getItem('catalogo-dinamico')) || [];
+            carrito.forEach(item => {
+                const target = catalogo.find(p => p.id === item.id);
+                if(target) target.stock = Math.max(0, target.stock - item.cantidad);
+            });
+            localStorage.setItem('catalogo-dinamico', JSON.stringify(catalogo));
+
+            let totalFactura = CarritoService.calcularSubtotal() - descuentoAplicado;
+            let resumenTexto = carrito.map(item => `${item.cantidad}x ${item.nombre}`).join(', ');
+
+            const nuevaOrden = {
+                id: "BA-" + Math.floor(1000 + Math.random() * 9000),
+                fecha: new Date().toISOString().split('T')[0],
+                clienteEmail: mailComprador,
+                clienteNombre: nomComprador,
+                detalle: resumenTexto,
+                destino: destinoFinal,
+                total: totalFactura,
+                estado: "Pendiente",
+                tracking: "No asignado (Esperando Andreani)",
+                metodo: met,
+                cuponUsado: cuponCodigoActivo || "Ninguno"
+            };
+
+            let pedidosGlobales = JSON.parse(localStorage.getItem('global-pedidos')) || [];
+            pedidosGlobales.push(nuevaOrden);
+            localStorage.setItem('global-pedidos', JSON.stringify(pedidosGlobales));
+
+            dispararNotificacionMailReal(nuevaOrden);
+
+            alert('¡Operación finalizada con éxito! Factura y tracking asincrónico enviados al correo electrónico.');
+            CarritoService.vaciar();
+            window.location.href = 'productos.html';
+        }
+    </script>
+</body>
+</html>
