@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Body Art - Catálogo de Insumos</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Body Art - Tienda de BodyPainting Profesional</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0;1&family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap');
@@ -29,125 +29,538 @@
                     <a href="videos.html" class="text-gray-500 hover:text-purple-600 transition">Vídeos e Historias</a>
                     <a href="contacto.html" class="text-gray-500 hover:text-purple-600 transition">Contacto y Reservas</a>
                 </div>
+                
                 <div class="flex items-center space-x-6">
                     <a href="checkout.html" class="relative p-2 text-gray-600 hover:text-purple-600 transition cursor-pointer">
                         <i class="fa-solid fa-shopping-cart text-xl"></i>
-                        <span id="cart-badge" class="hidden">0</span>
+                        <span id="cart-badge" class="absolute -top-1 -right-1 bg-purple-600 text-white font-bold rounded-full w-4 h-4 flex items-center justify-center text-[9px] hidden">0</span>
                     </a>
-                    <a href="login.html" id="nav-login-btn" class="hidden md:flex items-center gap-2 text-xs font-medium tracking-widest uppercase text-gray-600 hover:text-purple-600 border border-gray-300 rounded-full px-4 py-2 hover:border-purple-600 cursor-pointer">
-                        <i class="fa-solid fa-user"></i>
-                        <span id="nav-login-text">Ingresar</span>
-                    </a>
+                    
+                    <div class="flex items-center gap-2">
+                        <a href="login.html" id="nav-login-btn" class="flex items-center gap-2 text-xs font-medium tracking-widest uppercase text-gray-600 hover:text-purple-600 border border-gray-300 rounded-full px-4 py-2 hover:border-purple-600 cursor-pointer">
+                            <i class="fa-solid fa-user"></i>
+                            <span id="nav-login-text">Ingresar</span>
+                        </a>
+                        <button onclick="cerrarSesionApp()" id="nav-logout-btn" class="hidden text-xs font-medium tracking-widest uppercase text-red-500 hover:text-red-700 border border-transparent hover:border-red-200 rounded-full p-2 cursor-pointer transition" title="Cerrar Sesión">
+                            <i class="fa-solid fa-right-from-bracket text-base"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     </nav>
 
-    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
-        <div class="text-center mb-12">
-            <h2 class="font-serif text-3xl tracking-wider uppercase">Insumos y Kits de Arte Corporal</h2>
-            <div class="h-1 w-12 bg-purple-600 mx-auto mt-3"></div>
+    <div class="flex-grow w-full max-w-7xl mx-auto flex flex-col md:flex-row gap-8 p-4 md:py-12">
+        <aside class="w-full md:w-64 bg-white border border-gray-200 p-6 rounded-sm shadow-xs space-y-6 self-start text-xs">
+            <div>
+                <h2 class="font-bold text-sm tracking-wider uppercase border-b pb-3 text-gray-900">FILTRAR Y ORDENAR</h2>
+            </div>
+
+            <div class="space-y-3">
+                <h3 class="font-bold tracking-widest text-gray-400 uppercase text-[10px]">ORDENAR POR</h3>
+                <div class="flex flex-col gap-2.5 font-medium text-gray-700">
+                    <label class="flex items-center gap-3 cursor-pointer">
+                        <input type="radio" name="ordenar" value="pertinencia" checked onchange="manejarFiltrosYOrden()" class="accent-purple-600 w-4 h-4">
+                        <span>Pertinencia</span>
+                    </label>
+                    <label class="flex items-center gap-3 cursor-pointer">
+                        <input type="radio" name="ordenar" value="bajo-alto" onchange="manejarFiltrosYOrden()" class="accent-purple-600 w-4 h-4">
+                        <span>Precio: De bajo a alto</span>
+                    </label>
+                    <label class="flex items-center gap-3 cursor-pointer">
+                        <input type="radio" name="ordenar" value="mayor-menor" onchange="manejarFiltrosYOrden()" class="accent-purple-600 w-4 h-4">
+                        <span>Precio: De mayor a menor</span>
+                    </label>
+                </div>
+            </div>
+
+            <hr class="border-gray-100">
+
+            <div class="space-y-3">
+                <h3 class="font-bold tracking-widest text-gray-400 uppercase text-[10px]">TIPO DE PRODUCTO</h3>
+                <div id="lista-categorias-filtro" class="flex flex-col gap-2.5 font-semibold text-gray-600 uppercase tracking-wide">
+                    <button onclick="cambiarCategoria('Todos')" id="cat-Todos" class="text-purple-600 text-left transition block cursor-pointer font-bold">Todos</button>
+                    <button onclick="cambiarCategoria('Pinturas')" id="cat-Pinturas" class="text-gray-500 hover:text-purple-600 text-left transition block cursor-pointer">Pinturas</button>
+                    <button onclick="cambiarCategoria('Herramientas')" id="cat-Herramientas" class="text-gray-500 hover:text-purple-600 text-left transition block cursor-pointer">Herramientas</button>
+                    <button onclick="cambiarCategoria('Preparación')" id="cat-Preparación" class="text-gray-500 hover:text-purple-600 text-left transition block cursor-pointer">Preparación</button>
+                    <button onclick="cambiarCategoria('Kits')" id="cat-Kits" class="text-gray-500 hover:text-purple-600 text-left transition block cursor-pointer">Kits / Combos</button>
+                </div>
+            </div>
+        </aside>
+
+        <main class="flex-grow space-y-6">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white border border-gray-200 p-4 rounded-sm shadow-xs gap-2">
+                <h2 id="banner-titulo-tienda" class="font-bold text-xs uppercase tracking-widest text-gray-900">LOS MEJORES DE LA CULTURA BODY ART</h2>
+                <span id="contador-productos-pantalla" class="text-[10px] font-bold uppercase tracking-wider text-purple-600 bg-purple-50 px-2.5 py-1 rounded-sm">0 Items</span>
+            </div>
+
+            <div id="grilla-productos-bodyart" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full"></div>
+        </main>
+    </div>
+
+    <div id="modal-perfil-usuario" class="fixed inset-0 w-screen h-screen bg-gray-50 z-55 hidden flex-col uppercase text-xs tracking-wide">
+        <div class="bg-gray-900 text-white px-8 py-5 flex justify-between items-center shadow-md">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full border border-purple-500 flex items-center justify-center font-bold text-sm bg-gray-800">BA</div>
+                <h3 class="font-serif font-bold tracking-widest text-sm md:text-base">Panel General de Gestión del Cliente</h3>
+            </div>
+            <button onclick="cerrarModalPerfil()" class="text-gray-400 hover:text-white transition cursor-pointer flex items-center gap-2 font-bold tracking-widest text-[10px]">
+                <span>Volver a la Tienda</span> <i class="fa-solid fa-arrow-right text-sm"></i>
+            </button>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8" id="lista-productos"></div>
-    </main>
+        
+        <div class="flex-grow max-w-7xl w-full mx-auto p-6 md:p-8 grid grid-cols-1 md:grid-cols-12 gap-8 overflow-y-auto">
+            <div class="md:col-span-5 space-y-6 md:border-r border-gray-200 md:pr-8 text-left">
+                <h4 class="font-bold text-purple-600 tracking-widest text-[11px] flex items-center gap-2 border-b border-gray-100 pb-2">
+                    <i class="fa-solid fa-user-gear text-sm"></i> Mis Datos Personales
+                </h4>
+                
+                <div class="space-y-4 font-bold text-gray-900">
+                    <div class="space-y-1">
+                        <label class="text-[10px] text-gray-900 font-bold block">Nombre Completo:</label>
+                        <div class="flex gap-2">
+                            <input type="text" id="input-perfil-nombre" class="w-full bg-white border border-gray-300 p-2.5 rounded-sm text-gray-900 focus:outline-purple-600 uppercase text-xs font-medium" disabled>
+                            <button onclick="habilitarEdicionInput('input-perfil-nombre')" class="p-2.5 border border-gray-300 bg-white hover:bg-gray-100 rounded-sm text-gray-600 cursor-pointer transition">
+                                <i class="fa-solid fa-pen text-xs"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="space-y-1">
+                        <label class="text-[10px] text-gray-900 font-bold block">Correo Electrónico:</label>
+                        <input type="email" id="input-perfil-email" class="w-full bg-gray-100 border border-gray-200 p-2.5 rounded-sm text-gray-500 normal-case text-xs font-medium cursor-not-allowed" disabled>
+                    </div>
+
+                    <hr class="border-gray-200 my-4">
+                    <h5 class="font-bold text-gray-900 tracking-wider text-[10px] uppercase mb-2">Dirección de Envío y Facturación</h5>
+                    
+                    <div class="space-y-1">
+                        <label class="text-[10px] text-gray-900 font-bold block">Calle y Altura:</label>
+                        <div class="flex gap-2">
+                            <input type="text" id="input-perfil-calle" class="w-full bg-white border border-gray-300 p-2.5 rounded-sm text-gray-900 focus:outline-purple-600 uppercase text-xs font-medium" disabled>
+                            <button onclick="habilitarEdicionInput('input-perfil-calle')" class="p-2.5 border border-gray-300 bg-white hover:bg-gray-100 rounded-sm text-gray-600 cursor-pointer transition">
+                                <i class="fa-solid fa-pen text-xs"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="space-y-1">
+                        <label class="text-[10px] text-gray-900 font-bold block">Piso / Departamento (Opcional):</label>
+                        <div class="flex gap-2">
+                            <input type="text" id="input-perfil-piso" class="w-full bg-white border border-gray-300 p-2.5 rounded-sm text-gray-900 focus:outline-purple-600 uppercase text-xs font-medium" disabled>
+                            <button onclick="habilitarEdicionInput('input-perfil-piso')" class="p-2.5 border border-gray-300 bg-white hover:bg-gray-100 rounded-sm text-gray-600 cursor-pointer transition">
+                                <i class="fa-solid fa-pen text-xs"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="space-y-1">
+                            <label class="text-[10px] text-gray-900 font-bold block">Ciudad:</label>
+                            <div class="flex gap-2">
+                                <input type="text" id="input-perfil-ciudad" class="w-full bg-white border border-gray-300 p-2.5 rounded-sm text-gray-900 focus:outline-purple-600 uppercase text-xs font-medium" disabled>
+                                <button onclick="habilitarEdicionInput('input-perfil-ciudad')" class="p-2.5 border border-gray-300 bg-white hover:bg-gray-100 rounded-sm text-gray-600 cursor-pointer transition">
+                                    <i class="fa-solid fa-pen text-xs"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-[10px] text-gray-900 font-bold block">Provincia:</label>
+                            <div class="flex gap-2">
+                                <input type="text" id="input-perfil-provincia" class="w-full bg-white border border-gray-300 p-2.5 rounded-sm text-gray-900 focus:outline-purple-600 uppercase text-xs font-medium" disabled>
+                                <button onclick="habilitarEdicionInput('input-perfil-provincia')" class="p-2.5 border border-gray-300 bg-white hover:bg-gray-100 rounded-sm text-gray-600 cursor-pointer transition">
+                                    <i class="fa-solid fa-pen text-xs"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button onclick="guardarCambiosPerfil()" class="w-full mt-4 bg-purple-600 hover:bg-purple-700 text-white text-[11px] font-bold p-3 rounded-sm tracking-widest transition cursor-pointer shadow-md flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-floppy-disk"></i> Guardar Cambios
+                    </button>
+                </div>
+            </div>
+
+            <div class="md:col-span-7 space-y-6 text-left">
+                <h4 class="font-bold text-purple-600 tracking-widest text-[11px] flex items-center gap-2 border-b border-gray-100 pb-2">
+                    <i class="fa-solid fa-box-open text-sm"></i> Historial de Compras y Seguimiento de Envío
+                </h4>
+                <div id="perfil-lista-compras" class="space-y-4 pr-1 font-semibold text-gray-900"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-formulario-reclamo" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-60 hidden items-center justify-center p-4 uppercase text-xs tracking-wide">
+        <div class="bg-white rounded-md max-w-md w-full border border-gray-200 shadow-2xl p-6 text-left space-y-5">
+            <div class="flex justify-between items-center border-b border-gray-100 pb-3">
+                <h3 class="font-bold text-gray-900 text-xs flex items-center gap-2">
+                    <i class="fa-solid fa-circle-exclamation text-rose-500"></i> Configurar Reclamo de Compra
+                </h3>
+                <button onclick="cerrarFormularioReclamo()" class="text-gray-400 hover:text-gray-600 cursor-pointer"><i class="fa-solid fa-xmark text-base"></i></button>
+            </div>
+
+            <input type="hidden" id="reclamo-pedido-id">
+
+            <div class="space-y-1.5">
+                <label class="text-[10px] text-gray-400 font-bold block">Motivo de la Disconformidad:</label>
+                <select id="select-reclamo-motivo" class="w-full bg-gray-50 border border-gray-300 p-2.5 rounded-sm font-semibold text-gray-900 text-xs uppercase focus:outline-purple-600">
+                    <option value="Error de Compra">Error de Compra / Equivocación</option>
+                    <option value="Arrepentimiento">Arrepentimiento de Compra</option>
+                    <option value="Llegó Tarde">El Producto Llegó con Retraso</option>
+                    <option value="Mal Estado">El Insumo Llegó Dañado o en Mal Estado</option>
+                    <option value="Otro">Otro Motivo Particular</option>
+                </select>
+            </div>
+
+            <div class="space-y-2">
+                <label class="text-[10px] text-gray-400 font-bold block">¿Qué solución preferís?:</label>
+                <div class="flex flex-col gap-2 font-semibold text-gray-900">
+                    <label class="flex items-center gap-3 cursor-pointer bg-gray-50 p-2.5 rounded-sm border border-gray-200">
+                        <input type="radio" name="reclamoSolucion" value="Cambio de Producto" checked class="accent-purple-600 w-4 h-4">
+                        <span>Recibir otro producto (Cambio directo)</span>
+                    </label>
+                    <label class="flex items-center gap-3 cursor-pointer bg-gray-50 p-2.5 rounded-sm border border-gray-200">
+                        <input type="radio" name="reclamoSolucion" value="Reembolso de Dinero" class="accent-purple-600 w-4 h-4">
+                        <span>Reembolso del dinero nuevamente</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="pt-2 border-t border-gray-100">
+                <button onclick="enviarFormularioReclamoFinal()" class="w-full bg-rose-50 border border-rose-200 hover:bg-rose-100 text-rose-700 font-bold p-3 rounded-sm tracking-widest text-[11px] transition cursor-pointer">
+                    Confirmar e Iniciar Trámite de Reclamo
+                </button>
+            </div>
+        </div>
+    </div>
 
     <footer class="bg-white border-t border-gray-100 py-6 text-center text-xs text-gray-400 uppercase tracking-widest">
         &copy; 2026 Body Art Studio. Todos los derechos reservados.
     </footer>
 
+    <div id="toast-contenedor-app" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none uppercase text-[9px] tracking-widest font-bold"></div>
+
     <script src="carrito-service.js"></script>
-    <script src="producto-service.js"></script>
 
     <script>
+        let categoriaSeleccionada = "Todos";
+
         function initPantallaProductos() {
-            let catalogoDinamico = JSON.parse(localStorage.getItem('catalogo-dinamico'));
+            inicializarBaseDeDatosCentral();
+            manejarFiltrosYOrden();
+            chequearSesionGlobal();
             
-            // Si el almacenamiento local está vacío o desactualizado, creamos la estructura base inicial
-            if (!catalogoDinamico || catalogoDinamico.length === 0 || catalogoDinamico[0].codigo === "PIN-01") {
-                catalogoDinamico = [
-                    { id: 1, codigo: "PIN-RED", nombre: "Pintura FX - Rojo Intenso (100ml)", desc: "Pintura profesional hipoalergénica de alta densidad.", precio: 450, img: "" },
-                    { id: 2, codigo: "PIN-BLU", nombre: "Pintura FX - Azul Francia (100ml)", desc: "Ideal para bases uniformes y degradés artísticos intensos.", precio: 450, img: "" },
-                    { id: 3, codigo: "PIN-BLK", nombre: "Pintura FX - Negro Absoluto (100ml)", desc: "Máxima opacidad para líneas de contorno y sombreados FX.", precio: 490, img: "" },
-                    { id: 4, codigo: "PNC-02", nombre: "Pincel de Detalle Liner N°2", desc: "Pelo sintético de alta precisión para trazos finos.", precio: 300, img: "" },
-                    { id: 5, codigo: "PNC-08", nombre: "Pincel Chato para Fondos N°8", desc: "Cerdas suaves ideales para cubrir grandes superficies rápido.", precio: 380, img: "" },
-                    { id: 6, codigo: "GLI-GLD", nombre: "Gliter Cosmético Destello - Oro", desc: "Brillo premium aprobado para uso dermatológico en rostro.", precio: 350, img: "" },
-                    { id: 7, codigo: "ESP-STP", nombre: "Esponja de Stippling (Efectos)", desc: "Textura abierta para simular barbas, raspaduras y heridas.", precio: 220, img: "" },
-                    { id: 8, codigo: "STN-GEO", nombre: "Plantilla Stencil - Geométricos", desc: "Lámina flexible lavable con patrones geométricos abstractos.", precio: 280, img: "" },
-                    { id: 9, codigo: "COM-PLT", nombre: "Compotera Plástica de Mezcla", desc: "Paleta con 6 cavidades profundas para diluir y mezclar tintas.", precio: 190, img: "" },
-                    // Kits
-                    { id: 10, codigo: "KIT-START-FX", nombre: "Pack Iniciación Corporal", desc: "Contiene: Pintura Roja + Azul + Pincel N°2 + Compotera Mezcladora.", precio: 1100, img: "" },
-                    { id: 11, codigo: "KIT-PRO-GLAM", nombre: "Combo Glitter & Efectos Pro", desc: "Contiene: Pintura Negra + Pincel N°8 + Glitter Oro + Esponja Stippling.", precio: 1400, img: "" }
-                ];
-                localStorage.setItem('catalogo-dinamico', JSON.stringify(catalogoDinamico));
-            }
-
-            // 🛠️ GRILLA DE ENLACES FIJOS: Reemplazá acá adentro las URLs que quieras cambiar.
-            // Al recargar, estas imágenes van a pisar de prepo a la memoria vieja.
-            const urlsFijasDelCodigo = [
-                "https://tse3.mm.bing.net/th/id/OIP.SvH2F-dpljdZcvG98fsJ_wAAAA?pid=Api&P=0&h=180", // Foto 1: Pintura Roja (Cambiá este link si querés)
-                "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=500&q=80", // Foto 2: Pintura Azul
-                "https://images.unsplash.com/photo-1516979187457-637abb4f9353?w=500&q=80", // Foto 3: Pintura Negra
-                "https://images.unsplash.com/photo-1515688594390-b649af70d282?w=500&q=80", // Foto 4: Pincel N°2
-                "https://images.unsplash.com/photo-1512496015851-a90fb38ba796?w=500&q=80", // Foto 5: Pincel N°8
-                "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=500&q=80", // Foto 6: Glitter Oro
-                "https://images.unsplash.com/photo-1604654894610-df490651e133?w=500&q=80", // Foto 7: Esponja Efectos
-                "https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=500&q=80", // Foto 8: Stencil
-                "https://images.unsplash.com/photo-1608248597481-496100c8c836?w=500&q=80", // Foto 9: Compotera
-                "https://images.unsplash.com/photo-1526045612212-70caf35c14df?w=500&q=80", // Foto 10: Kit Inicio
-                "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=500&q=80"  // Foto 11: Kit Glam Pro
-            ];
-
-            // Sincronizamos las fotos del código directamente sobre el catálogo antes de dibujar
-            catalogoDinamico.forEach((prod, index) => {
-                if (urlsFijasDelCodigo[index]) {
-                    prod.img = urlsFijasDelCodigo[index];
-                }
-            });
-            localStorage.setItem('catalogo-dinamico', JSON.stringify(catalogoDinamico));
-
-            // Sincronización transparente con el admin-dashboard
-            if (typeof ProductoService !== 'undefined') {
-                localStorage.setItem('global-inventario', JSON.stringify({ productosSimples: catalogoDinamico.slice(0,9), kits: catalogoDinamico.slice(9) }));
-            }
-
-            // Renderización exacta con tu CSS, espaciados y diseño de tarjetas original
-            document.getElementById('lista-productos').innerHTML = catalogoDinamico.map(prod => `
-                <div class="bg-white border border-gray-100 rounded-sm overflow-hidden p-6 flex flex-col justify-between hover:shadow-md transition shadow-xs">
-                    <div>
-                        <div class="h-48 bg-gray-100 mb-4 overflow-hidden rounded-sm">
-                            <img src="${prod.img}" class="w-full h-full object-cover">
-                        </div>
-                        <div class="flex justify-between items-start mb-1">
-                            <h3 class="font-medium text-lg text-gray-900">${prod.nombre}</h3>
-                            <span class="text-[10px] font-mono text-purple-600 bg-purple-50 px-1.5 py-0.5 rounded-sm font-bold uppercase">${prod.codigo}</span>
-                        </div>
-                        <p class="text-gray-500 text-sm mb-4">${prod.desc}</p>
-                    </div>
-                    <div>
-                        <div class="text-xl font-bold mb-4 text-gray-900">$${prod.precio.toLocaleString('es-AR')}</div>
-                        <button onclick="comprarItem(${prod.id})" class="w-full bg-gray-900 hover:bg-purple-600 text-white text-xs uppercase tracking-widest py-3 transition cursor-pointer rounded-sm">Añadir al carrito</button>
-                    </div>
-                </div>
-            `).join('');
-
-            if (typeof CarritoService !== 'undefined' && CarritoService.actualizarBadgesNavbar) {
+            if (typeof CarritoService !== 'undefined') {
                 CarritoService.actualizarBadgesNavbar();
             }
-            chequearSesionGlobal();
         }
 
-        function comprarItem(id) {
-            if (typeof CarritoService !== 'undefined' && CarritoService.agregar) {
-                CarritoService.agregar(id);
+        function inicializarBaseDeDatosCentral() {
+            if(!localStorage.getItem('catalogo-dinamico')) {
+                const listaProductosNuevos = [
+                    // --- FOTO 1 ---
+                    { id: 1, codigo: "ACR-BASE", nombre: "Acrílico Corporal Blanco 250ml", categoria: "Pinturas", desc: "Pintura cremosa de alta densidad, base acuosa, hipoalergénica. Secado rápido sin cuartearse.", precio: 14500, stock: 26, minimo: 5, img: "https://cdn.onbuy.com/product/a006807de2684520975699ac34ec5265/990-990/pjzgbym.jpg", promo: "MÁS VENDIDO" },
+                    { id: 2, codigo: "ACR-NEON", nombre: "Pintura Acrílica Flúor UV 100ml", categoria: "Pinturas", desc: "Pigmentación fluorescente reactiva de alto impacto bajo iluminación ultravioleta.", precio: 18500, stock: 16, minimo: 4, img: "https://officemax.vtexassets.com/arquivos/ids/1417681/50126188_1.jpg?v=638518278011370000", promo: "EFECTO NEÓN" },
+                    { id: 3, codigo: "ACR-META", nombre: "Pintura Acrílica Metalizada Oro 120ml", categoria: "Pinturas", desc: "Acabado brilloso efecto espejo metálico premium. Apto para aplicación directa.", precio: 16000, stock: 12, minimo: 3, img: "https://http2.mlstatic.com/D_NQ_NP_950000-MCO71958938135_092023-O.webp", promo: "" },
+                    { id: 4, codigo: "HER-PINC", nombre: "Set de Pinceles Profesionales (x12)", categoria: "Herramientas", desc: "Variedad de cerdas sintéticas suaves (lengua de gato, liners y planos) para trazo fino corporal.", precio: 32000, stock: 18, minimo: 3, img: "https://m.media-amazon.com/images/I/71YvU89wGvL._AC_SL1500_.jpg", promo: "10% DE DESCUENTO" },
+                    { id: 5, codigo: "HER-AERO", nombre: "Set de 15 Brillantinas", categoria: "Herramientas", desc: "Set de brillantinas para que resalten tus obras.", precio: 8900, stock: 7, minimo: 2, img: "https://m.media-amazon.com/images/I/81vO8B6rE2L._AC_SL1500_.jpg", promo: "" },
+                    { id: 6, codigo: "HER-ESP", nombre: "Esponjas de Algodón para Difuminado (x6)", categoria: "Herramientas", desc: "Bloques de textura fina para fundido de colores y bases homogéneas sobre la piel.", precio: 7500, stock: 40, minimo: 5, img: "https://m.media-amazon.com/images/I/61S-r5Gg75L._AC_SL1200_.jpg", promo: "" },
+                    
+                    // --- FOTO 3 ---
+                    { id: 7, codigo: "PRE-FIJA", nombre: "Spray Fijador de Maquillaje Corporal", categoria: "Preparación", desc: "Fijador en aerosol de larga duración. Evita el desgaste por sudor o roce de prendas.", precio: 19000, stock: 25, minimo: 4, img: "https://fpro.com.ar/wp-content/uploads/2021/05/spray-fijador.jpg", promo: "" },
+                    { id: 8, codigo: "PRE-GEL", nombre: "Gel Base Barrera Humectante 200ml", categoria: "Preparación", desc: "Protector epitelial previo a la pintura que facilita la adecuación y remoción posterior.", precio: 11500, stock: 20, minimo: 3, img: "https://images.unsplash.com/photo-1608248597481-496100c80836?q=80&w=400", promo: "" },
+                    { id: 9, codigo: "PRE-STENCIL", nombre: "Plantillas / Stencils de Diseños Variados", categoria: "Preparación", desc: "Láminas flexibles lavables con formas artísticas para calcos rápidos en sesiones.", precio: 9800, stock: 50, minimo: 10, img: "https://m.media-amazon.com/images/I/81shK2ZpLWL._AC_SL1500_.jpg", promo: "" },
+                    { id: 101, codigo: "KIT-INICIAL-BP", nombre: "Kit BodyPainting Inicial", categoria: "Kits", desc: "El combo ideal. Incluye: 3 Acrílicos Base (Blanco, verde neon, oro), Set de 3 Pinceles, Esponjas y brillantinas.", precio: 57000, stock: 0, minimo: 0, img: "https://m.media-amazon.com/images/I/81vO8B6rE2L._AC_SL1500_.jpg", promo: "COMBO IMPERDIBLE" },
+                    { id: 102, codigo: "KIT-AVANZADO-BP", nombre: "Kit Body Painting Avanzado", categoria: "Kits", desc: "Incluye: 3 pinceles, 2 esponjas difuminadoras, 3 Pinturas Acrílicas base acuosa, 3 brillantinas, spray fijador corporal, crema corporal, stencil de diseño.", precio: 95000, stock: 0, minimo: 0, img: "https://m.media-amazon.com/images/I/71YvU89wGvL._AC_SL1500_.jpg", promo: "ELITE" }
+                ];
+                localStorage.setItem('catalogo-dinamico', JSON.stringify(listaProductosNuevos));
             }
+        }
+
+        function cambiarCategoria(cat) {
+            categoriaSeleccionada = cat;
+            const botones = document.querySelectorAll('#lista-categorias-filtro button');
+            botones.forEach(b => {
+                if (b.id === `cat-${cat}`) {
+                    b.className = "text-purple-600 text-left transition block cursor-pointer font-bold";
+                } else {
+                    b.className = "text-gray-500 hover:text-purple-600 text-left transition block cursor-pointer";
+                }
+            });
+            document.getElementById('banner-titulo-tienda').innerText = cat === 'Todos' ? 'LOS MEJORES DE LA CULTURA BODY ART' : `SECCIÓN: ${cat.toUpperCase()}`;
+            manejarFiltrosYOrden();
+        }
+
+        function manejarFiltrosYOrden() {
+            let productos = JSON.parse(localStorage.getItem('catalogo-dinamico')) || [];
+            const grilla = document.getElementById('grilla-productos-bodyart');
+            if (!grilla) return;
+
+            if (categoriaSeleccionada !== "Todos") {
+                productos = productos.filter(p => p.categoria === categoriaSeleccionada);
+            }
+
+            const ordenCriterio = document.querySelector('input[name="ordenar"]:checked').value;
+            if (ordenCriterio === 'bajo-alto') {
+                productos.sort((a, b) => a.precio - b.precio);
+            } else if (ordenCriterio === 'mayor-menor') {
+                productos.sort((a, b) => b.precio - a.precio);
+            }
+
+            document.getElementById('contador-productos-pantalla').innerText = `${productos.length} Ítems Encontrados`;
+
+            grilla.innerHTML = productos.map(p => {
+                const promoHtml = p.promo 
+                    ? `<span class="absolute bottom-2 left-2 bg-purple-600 text-white text-[8px] font-bold uppercase px-2 py-1 tracking-wider shadow-sm rounded-sm">${p.promo}</span>` 
+                    : '';
+
+                return `
+                    <div class="bg-white border border-gray-200 rounded-sm overflow-hidden p-4 flex flex-col justify-between shadow-xs hover:shadow-md transition">
+                        <div class="space-y-3">
+                            <div class="relative bg-gray-50 aspect-square overflow-hidden rounded-sm border border-gray-100">
+                                <img src="${p.img}" class="w-full h-full object-cover" alt="${p.nombre}">
+                                ${promoHtml}
+                            </div>
+                            <div class="text-left">
+                                <span class="text-[8px] font-bold text-gray-400 uppercase tracking-widest font-mono">${p.codigo}</span>
+                                <h3 class="font-bold text-gray-900 text-xs tracking-wide uppercase mt-0.5 line-clamp-1">${p.nombre}</h3>
+                                <p class="text-gray-500 text-[10px] leading-relaxed mt-1 line-clamp-2 normal-case">${p.desc}</p>
+                            </div>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between">
+                            <div class="flex flex-col text-left">
+                                <span class="text-[8px] uppercase font-bold text-gray-400 tracking-widest">Precio Final</span>
+                                <span class="font-bold text-purple-600 text-sm">$${p.precio.toLocaleString('es-AR')}</span>
+                            </div>
+                            <button onclick="agregarAlCarrito(${p.id})" class="bg-gray-900 hover:bg-purple-600 text-white text-[9px] font-bold uppercase px-3 py-2 rounded-sm tracking-widest transition cursor-pointer">
+                                Comprar
+                            </button>
+                        </div>
+                    </div>`;
+            }).join('');
+        }
+
+        function agregarAlCarrito(id) {
+            if (typeof CarritoService !== 'undefined') {
+                const exito = CarritoService.agregar(id);
+                if (exito) {
+                    lanzarToastNotificacion("✨ Insumo agregado al carrito de Body Art");
+                } else {
+                    lanzarToastNotificacion("⚠️ No hay más stock físico de este insumo.");
+                }
+            }
+        }
+
+        function lanzarToastNotificacion(mensaje) {
+            const contenedor = document.getElementById('toast-contenedor-app');
+            if (!contenedor) return;
+
+            const elemento = document.createElement('div');
+            elemento.className = 'bg-gray-900 text-white px-4 py-3 rounded-sm shadow-xl border-l-4 border-purple-600 flex items-center gap-2';
+            elemento.innerHTML = `<i class="fa-solid fa-circle-check text-purple-400"></i> <span>${mensaje}</span>`;
+            contenedor.appendChild(elemento);
+            setTimeout(() => elemento.remove(), 2500);
         }
 
         function chequearSesionGlobal() {
             const u = JSON.parse(localStorage.getItem('usuario-sesion'));
-            if(u) {
-                const txt = u.email === 'admin@bodyart.com' || u.rol === 'ADMIN' ? 'Admin' : u.nombre;
-                document.getElementById('nav-login-text').innerText = txt;
+            const btnLogin = document.getElementById('nav-login-btn');
+            const txtLogin = document.getElementById('nav-login-text');
+            const btnLogout = document.getElementById('nav-logout-btn');
+
+            if(u && txtLogin) {
+                txtLogin.innerText = (u.email === 'admin@bodyart.com' || u.rol === 'ADMIN') ? 'Panel Admin' : u.nombre;
+                if(btnLogin) {
+                    if (u.email === 'admin@bodyart.com' || u.rol === 'ADMIN') {
+                        btnLogin.href = 'admin-dashboard.html';
+                    } else {
+                        btnLogin.removeAttribute('href'); btnLogin.onclick = abrirModalPerfil;
+                    }
+                }
+                if(btnLogout) btnLogout.classList.remove('hidden');
             }
+        }
+
+        function habilitarEdicionInput(idInput) {
+            const input = document.getElementById(idInput);
+            if(input) {
+                input.removeAttribute('disabled');
+                input.classList.add('bg-purple-50/40', 'border-purple-300');
+                input.focus();
+            }
+        }
+
+        function guardarCambiosPerfil() {
+            const u = JSON.parse(localStorage.getItem('usuario-sesion'));
+            if(!u) return;
+
+            u.nombre = document.getElementById('input-perfil-nombre').value;
+            u.direccionDesglosada = {
+                calle: document.getElementById('input-perfil-calle').value,
+                piso: document.getElementById('input-perfil-piso').value,
+                ciudad: document.getElementById('input-perfil-ciudad').value,
+                provincia: document.getElementById('input-perfil-provincia').value
+            };
+            u.direccion = `${u.direccionDesglosada.calle} ${u.direccionDesglosada.piso}, ${u.direccionDesglosada.ciudad}, ${u.direccionDesglosada.provincia}`;
+            localStorage.setItem('usuario-sesion', JSON.stringify(u));
+            
+            chequearSesionGlobal();
+            lanzarToastNotificacion("💾 Datos del perfil guardados");
+            cerrarModalPerfil();
+        }
+
+        // 🔥 LOGICA CORE: RECLAMOS SIEMPRE HABILITADOS (Y 5 DÍAS CORREN SÓLO SI FUE ENTREGADO)
+        function abrirModalPerfil() {
+            const u = JSON.parse(localStorage.getItem('usuario-sesion'));
+            if(!u) return;
+
+            document.getElementById('input-perfil-nombre').value = u.nombre || "Juan Cruz Tleye";
+            document.getElementById('input-perfil-email').value = u.email || "juantleye2@gmail.com";
+            
+            const dir = u.direccionDesglosada || { calle: "Av. Universidad 1200", piso: "", ciudad: "Villa María", provincia: "Córdoba" };
+            document.getElementById('input-perfil-calle').value = dir.calle;
+            document.getElementById('input-perfil-piso').value = dir.piso;
+            document.getElementById('input-perfil-ciudad').value = dir.ciudad;
+            document.getElementById('input-perfil-provincia').value = dir.provincia;
+
+            let comprasReales = JSON.parse(localStorage.getItem(`compras-${u.email}`));
+            if (!comprasReales) {
+                comprasReales = [
+                    { id: "B-998", fecha: "2026-06-07", total: 57000, detalle: "1x Kit Bodypainting Inicial Profesional", estado: "En Camino" },
+                    { id: "B-954", fecha: "2026-06-06", total: 14500, detalle: "1x Acrílico Corporal Blanco 250ml", estado: "Entregado" }
+                ];
+                localStorage.setItem(`compras-${u.email}`, JSON.stringify(comprasReales));
+            }
+
+            const listaReclamosActivos = JSON.parse(localStorage.getItem('registro-reclamos-app')) || {};
+            const contenedorCompras = document.getElementById('perfil-lista-compras');
+            
+            if(contenedorCompras) {
+                if(comprasReales.length === 0) {
+                    contenedorCompras.innerHTML = `<p class="p-6 text-center text-gray-400 italic text-[11px] bg-white border border-gray-200 rounded-sm">No registrás compras.</p>`;
+                } else {
+                    const fechaActualSistemas = new Date("2026-06-09");
+
+                    contenedorCompras.innerHTML = comprasReales.map(c => {
+                        let estadoEnvio = c.estado || "Procesando";
+                        let botonReclamoHtml = '';
+
+                        if(listaReclamosActivos[c.id]) {
+                            botonReclamoHtml = `
+                                <div class="bg-amber-50 border border-amber-200 text-amber-800 text-[10px] font-bold uppercase px-3 py-2 rounded-sm flex items-center gap-1.5 shadow-xs">
+                                    <i class="fa-solid fa-clock text-amber-600 animate-pulse"></i> ⚠️ Reclamo Iniciado - A la espera de respuesta
+                                </div>`;
+                        } else if (estadoEnvio === "Entregado") {
+                            const fechaEntrega = new Date(c.fecha); 
+                            const difTiempo = fechaActualSistemas.getTime() - fechaEntrega.getTime();
+                            const diasTranscurridos = Math.floor(difTiempo / (1000 * 60 * 60 * 24));
+
+                            if (diasTranscurridos <= 5 && diasTranscurridos >= 0) {
+                                botonReclamoHtml = `
+                                    <div class="flex flex-col items-end gap-1">
+                                        <button onclick="abrirFormularioReclamo('${c.id}')" class="bg-rose-50 border border-rose-200 hover:bg-rose-100 text-rose-700 font-bold text-[9px] tracking-wider uppercase px-3 py-1.5 rounded-sm transition cursor-pointer flex items-center gap-1.5 shadow-xs">
+                                            <i class="fa-solid fa-circle-exclamation text-rose-500"></i> Iniciar Reclamo
+                                        </button>
+                                        <span class="text-[8px] text-gray-500 font-bold block">Garantía: ${5 - diasTranscurridos} días restantes</span>
+                                    </div>`;
+                            } else {
+                                botonReclamoHtml = `<span class="text-[9px] text-gray-400 italic font-medium"><i class="fa-solid fa-circle-info"></i> Plazo de reclamo expirado</span>`;
+                            }
+                        } else {
+                            // Si NO está entregado, el botón funciona libre por derecho de arrepentimiento y no descuenta días
+                            botonReclamoHtml = `
+                                <div class="flex flex-col items-end gap-1">
+                                    <button onclick="abrirFormularioReclamo('${c.id}')" class="bg-rose-50 border border-rose-200 hover:bg-rose-100 text-rose-700 font-bold text-[9px] tracking-wider uppercase px-3 py-1.5 rounded-sm transition cursor-pointer flex items-center gap-1.5 shadow-xs">
+                                        <i class="fa-solid fa-circle-exclamation text-rose-500"></i> Iniciar Reclamo
+                                    </button>
+                                    <span class="text-[8px] text-purple-600 font-bold block">Orden en despacho (Plazo retenido)</span>
+                                </div>`;
+                        }
+
+                        let badgeColor = "bg-gray-100 text-gray-800";
+                        if (estadoEnvio === "Procesando") badgeColor = "bg-amber-100 text-amber-800 border border-amber-200";
+                        if (estadoEnvio === "En Camino" || estadoEnvio === "Recibido por Andreani") badgeColor = "bg-blue-100 text-blue-800 border border-blue-200";
+                        if (estadoEnvio === "Entregado") badgeColor = "bg-green-100 text-green-800 border border-green-200";
+
+                        return `
+                            <div class="bg-white border border-gray-200 rounded-sm p-5 space-y-3 shadow-xs">
+                                <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-2 border-b border-gray-100 pb-2.5">
+                                    <div class="flex flex-col">
+                                        <span class="text-[9px] text-gray-900 font-bold uppercase font-mono">Orden N°: ${c.id}</span>
+                                        <span class="text-[9px] text-gray-400 font-medium mt-0.5">Fecha: ${c.fecha}</span>
+                                    </div>
+                                    <span class="text-purple-600 font-bold text-sm">$${c.total.toLocaleString('es-AR')}</span>
+                                </div>
+                                <div class="text-gray-900 font-bold text-xs uppercase text-left">${c.detalle}</div>
+                                <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-gray-100">
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-[10px] text-gray-900 font-bold">Distribución:</span>
+                                        <span class="${badgeColor} text-[9px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider">${estadoEnvio === 'Recibido por Andreani' ? 'En Camino' : estadoEnvio}</span>
+                                    </div>
+                                    ${botonReclamoHtml}
+                                </div>
+                            </div>`;
+                    }).join('');
+                }
+            }
+
+            const modal = document.getElementById('modal-perfil-usuario');
+            if(modal) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                document.body.classList.add('overflow-hidden');
+            }
+        }
+
+        function abrirFormularioReclamo(idOrden) {
+            const inputId = document.getElementById('reclamo-pedido-id');
+            if(inputId) inputId.value = idOrden;
+            
+            const modalReclamo = document.getElementById('modal-formulario-reclamo');
+            if (modalReclamo) {
+                modalReclamo.classList.remove('hidden');
+                modalReclamo.classList.add('flex');
+            }
+        }
+
+        function cerrarFormularioReclamo() {
+            const subModal = document.getElementById('modal-formulario-reclamo');
+            if(subModal) {
+                subModal.classList.remove('flex');
+                subModal.classList.add('hidden');
+            }
+        }
+
+        function enviarFormularioReclamoFinal() {
+            const idPedido = document.getElementById('reclamo-pedido-id').value;
+            const motivo = document.getElementById('select-reclamo-motivo').value;
+            const solucion = document.querySelector('input[name="reclamoSolucion"]:checked').value;
+
+            let listaReclamosActivos = JSON.parse(localStorage.getItem('registro-reclamos-app')) || {};
+            listaReclamosActivos[idPedido] = {
+                motivo: motivo,
+                solucionDeseada: solucion,
+                fechaInicio: new Date().toISOString().split('T')[0]
+            };
+            localStorage.setItem('registro-reclamos-app', JSON.stringify(listaReclamosActivos));
+
+            cerrarFormularioReclamo();
+            abrirModalPerfil(); 
+            lanzarToastNotificacion(`🚨 Reclamo Orden ${idPedido} iniciado.`);
+        }
+
+        function cerrarModalPerfil() {
+            const modal = document.getElementById('modal-perfil-usuario');
+            if(modal) {
+                modal.classList.remove('flex');
+                modal.classList.add('hidden');
+                document.body.classList.remove('overflow-hidden');
+            }
+        }
+
+        function cerrarSesionApp() {
+            localStorage.removeItem('usuario-sesion');
+            window.location.reload();
         }
     </script>
 </body>

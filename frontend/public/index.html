@@ -29,30 +29,46 @@
                     <a href="videos.html" class="text-gray-500 hover:text-purple-600 transition">Vídeos e Historias</a>
                     <a href="contacto.html" class="text-gray-500 hover:text-purple-600 transition">Contacto y Reservas</a>
                 </div>
+                
                 <div class="flex items-center space-x-6">
                     <a href="productos.html?ver-carrito=true" class="relative p-2 text-gray-600 hover:text-purple-600 transition cursor-pointer">
                         <i class="fa-solid fa-shopping-cart text-xl"></i>
                         <span id="cart-badge" class="absolute -top-1 -right-1 hidden items-center justify-center px-2 py-0.5 text-xs font-bold leading-none text-white bg-purple-600 rounded-full">0</span>
                     </a>
-                    <a href="login.html" id="nav-login-btn" class="hidden md:flex items-center gap-2 text-xs font-medium tracking-widest uppercase text-gray-600 hover:text-purple-600 border border-gray-300 rounded-full px-4 py-2 hover:border-purple-600 cursor-pointer">
-                        <i class="fa-solid fa-user"></i>
-                        <span id="nav-login-text">Ingresar</span>
-                    </a>
+                    
+                    <div class="flex items-center gap-2">
+                        <a href="login.html" id="nav-login-btn" class="flex items-center gap-2 text-xs font-medium tracking-widest uppercase text-gray-600 hover:text-purple-600 border border-gray-300 rounded-full px-4 py-2 hover:border-purple-600 cursor-pointer">
+                            <i class="fa-solid fa-user"></i>
+                            <span id="nav-login-text">Ingresar</span>
+                        </a>
+                        <button onclick="cerrarSesionApp()" id="nav-logout-btn" class="hidden text-xs font-medium tracking-widest uppercase text-red-500 hover:text-red-700 border border-transparent hover:border-red-200 rounded-full p-2 cursor-pointer transition" title="Cerrar Sesión">
+                            <i class="fa-solid fa-right-from-bracket text-base"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     </nav>
 
     <main class="flex-grow">
-        <div class="relative h-[80vh] w-full flex items-center justify-center overflow-hidden bg-black">
-            <div class="absolute inset-0 z-0 bg-[url('https://images.unsplash.com/photo-1513364776144-60967b0f800f?q=80&w=1471&auto=format&fit=crop')] bg-cover bg-center opacity-70 filter brightness-75"></div>
-            <div class="absolute inset-0 bg-black/20 z-10"></div>
-            <div class="relative z-20 max-w-4xl mx-auto px-6 text-center text-white">
-                <div class="bg-black/40 backdrop-blur-sm p-8 md:p-12 rounded-sm border border-white/10 inline-block">
-                    <h1 class="font-serif text-4xl md:text-6xl tracking-widest uppercase mb-4">Ilusiones</h1>
-                    <p class="text-sm md:text-lg tracking-wide font-light max-w-2xl mx-auto mb-8">Transformando el cuerpo humano en criaturas poderosas y lienzos vivos.</p>
-                    <a href="videos.html" class="inline-block bg-purple-600 hover:bg-purple-700 text-white font-medium text-xs tracking-widest uppercase px-8 py-4 transition shadow-lg rounded-sm cursor-pointer">Ver Historias y Vídeos</a>
-                </div>
+        <div class="relative h-screen w-full flex flex-col justify-end overflow-hidden">
+            <div 
+                style="background-image: url('./mi-nueva-foto.jpg');" 
+                class="absolute inset-0 z-0 bg-cover bg-center opacity-90 filter brightness-90">
+            </div>
+
+            <div class="absolute inset-0 z-10 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+
+            <div class="relative z-20 w-full max-w-4xl mx-auto px-6 pb-16 md:pb-24 text-center">
+                <h1 class="text-5xl md:text-7xl font-serif text-white mb-3 tracking-wide uppercase drop-shadow-lg">
+                    Ilusiones
+                </h1>
+                <p class="text-base md:text-xl text-gray-200 mb-6 max-w-2xl mx-auto font-light leading-relaxed drop-shadow-md">
+                    Transformando el cuerpo humano en criaturas poderosas y lienzos vivos.
+                </p>
+                <a href="videos.html" class="inline-block bg-[#9333ea] hover:bg-[#a855f7] text-white font-medium px-10 py-3.5 rounded-full transition-all duration-300 transform hover:scale-105 shadow-xl tracking-wider text-sm uppercase">
+                    Ver Historias y Vídeos
+                </a>
             </div>
         </div>
 
@@ -62,6 +78,43 @@
             <a href="productos.html" class="inline-block bg-gray-950 hover:bg-gray-800 text-white text-xs uppercase tracking-widest px-6 py-3 rounded-sm transition cursor-pointer">Ir a la Tienda Completa</a>
         </section>
     </main>
+
+    <div id="modal-perfil-usuario" class="fixed inset-0 bg-black/50 backdrop-blur-xs z-55 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-md max-w-md w-full border border-gray-200 shadow-2xl overflow-hidden flex flex-col uppercase text-xs tracking-wide">
+            <div class="bg-gray-900 text-white px-6 py-4 flex justify-between items-center border-b border-gray-800">
+                <h3 class="font-serif font-bold tracking-widest text-sm">Perfil del Artista</h3>
+                <button onclick="cerrarModalPerfil()" class="text-gray-400 hover:text-white transition cursor-pointer">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            
+            <div class="p-6 space-y-6">
+                <div class="space-y-3 text-left">
+                    <h4 class="font-bold text-purple-600 tracking-widest text-[10px]">Información Personal</h4>
+                    <div class="bg-gray-50 border border-gray-100 p-4 rounded-sm space-y-2.5 font-medium text-gray-700">
+                        <div class="flex justify-between border-b border-gray-200/60 pb-1.5">
+                            <span class="text-gray-400 font-bold">Nombre:</span>
+                            <span id="perfil-nombre" class="text-gray-900"></span>
+                        </div>
+                        <div class="flex justify-between border-b border-gray-200/60 pb-1.5">
+                            <span class="text-gray-400 font-bold">Email:</span>
+                            <span id="perfil-email" class="text-gray-900 normal-case"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400 font-bold">Dirección:</span>
+                            <span id="perfil-direccion" class="text-gray-900"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-3 text-left">
+                    <h4 class="font-bold text-purple-600 tracking-widest text-[10px]">Historial de Compras</h4>
+                    <div id="perfil-lista-compras" class="max-h-40 overflow-y-auto border border-gray-100 rounded-sm divide-y divide-gray-100 font-medium text-gray-600">
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <footer class="bg-white border-t border-gray-100 py-6 text-center text-xs text-gray-400 uppercase tracking-widest">
         &copy; 2026 Body Art Studio. Todos los derechos reservados.
@@ -81,9 +134,94 @@
         // Modificar el Navbar según el estado de la sesión
         function chequearSesionGlobal() {
             const usuarioLogueado = JSON.parse(localStorage.getItem('usuario-sesion'));
-            if(usuarioLogueado) {
-                document.getElementById('nav-login-text').innerText = usuarioLogueado.email === 'admin@bodyart.com' ? 'Admin' : usuarioLogueado.nombre;
+            const btnLogin = document.getElementById('nav-login-btn');
+            const txtLogin = document.getElementById('nav-login-text');
+            const btnLogout = document.getElementById('nav-logout-btn');
+
+            if(usuarioLogueado && txtLogin) {
+                // Muestra el nombre real del usuario o Admin
+                txtLogin.innerText = usuarioLogueado.email === 'admin@bodyart.com' ? 'Admin' : usuarioLogueado.nombre;
+                
+                if(btnLogin) {
+                    if (usuarioLogueado.email === 'admin@bodyart.com') {
+                        btnLogin.href = 'admin-dashboard.html';
+                    } else {
+                        // Impedimos que navegue y le asignamos la apertura del modal
+                        btnLogin.removeAttribute('href');
+                        btnLogin.onclick = abrirModalPerfil;
+                    }
+                }
+
+                // Hacemos visible el botón de cerrar sesión
+                if(btnLogout) {
+                    btnLogout.classList.remove('hidden');
+                }
+            } else {
+                if(txtLogin) txtLogin.innerText = "Ingresar";
+                if(btnLogin) {
+                    btnLogin.href = 'login.html';
+                    btnLogin.onclick = null;
+                }
+                if(btnLogout) {
+                    btnLogout.classList.add('hidden');
+                }
             }
+        }
+
+        // Abrir ventana flotante con los datos y compras del LocalStorage
+        function abrirModalPerfil() {
+            const u = JSON.parse(localStorage.getItem('usuario-sesion'));
+            if(!u) return;
+
+            // Inyectar datos dinámicos o usar los guardados de respaldo por defecto
+            document.getElementById('perfil-nombre').innerText = u.nombre || "Juan Cruz Tleye";
+            document.getElementById('perfil-email').innerText = u.email || "juan@mail.com";
+            document.getElementById('perfil-direccion').innerText = u.direccion || "Villa María, Córdoba";
+
+            // Buscar compras del usuario o renderizar compras simuladas coherentes con la tienda
+            const historialCompras = JSON.parse(localStorage.getItem(`compras-${u.email}`)) || [
+                { fecha: "04/06/2026", total: 57000, detalle: "1x Kit Bodypainting Inicial" },
+                { fecha: "29/05/2026", total: 14500, detalle: "1x Acrílico Corporal Blanco 250ml" }
+            ];
+
+            const contenedorCompras = document.getElementById('perfil-lista-compras');
+            if(contenedorCompras) {
+                if(historialCompras.length === 0) {
+                    contenedorCompras.innerHTML = `<p class="p-4 text-center text-gray-400 italic text-[10px]">No registrás compras realizadas.</p>`;
+                } else {
+                    contenedorCompras.innerHTML = historialCompras.map(c => `
+                        <div class="p-3 bg-white hover:bg-gray-50 flex flex-col gap-1 text-left">
+                            <div class="flex justify-between items-center text-gray-400 text-[10px] font-mono">
+                                <span>Fec: ${c.fecha}</span>
+                                <span class="text-purple-600 font-bold">$${c.total.toLocaleString('es-AR')}</span>
+                            </div>
+                            <div class="text-gray-800 font-semibold uppercase text-[10px] line-clamp-1">${c.detalle}</div>
+                        </div>
+                    `).join('');
+                }
+            }
+
+            // Mostrar el modal
+            const modal = document.getElementById('modal-perfil-usuario');
+            if(modal) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            }
+        }
+
+        // Cerrar ventana flotante
+        function cerrarModalPerfil() {
+            const modal = document.getElementById('modal-perfil-usuario');
+            if(modal) {
+                modal.classList.remove('flex');
+                modal.classList.add('hidden');
+            }
+        }
+
+        // Función lógica para limpiar la sesión
+        function cerrarSesionApp() {
+            localStorage.removeItem('usuario-sesion');
+            window.location.reload();
         }
     </script>
 </body>

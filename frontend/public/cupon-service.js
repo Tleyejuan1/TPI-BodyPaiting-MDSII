@@ -34,28 +34,31 @@ const CuponService = {
             return { valido: false, msg: "⚠️ Este cupón ya fue utilizado en otra transacción.", monto: 0 };
         }
 
-        // VALIDACIÓN DE CLIENTE ESPECÍFICO ASOCIADO DESDE LA CONSOLA
+        // VALIDACIÓN DE CLIENTE ESPECÍFICO ASOCIADO DESDE LA CONSOLA (Normalizado al 100%)
         const sesionUsuario = JSON.parse(localStorage.getItem('usuario-sesion'));
         const emailCompradorActual = sesionUsuario ? sesionUsuario.email.toLowerCase().trim() : "comprador@utn.com";
 
-        if (cupon.clienteExclusivo && cupon.clienteExclusivo !== emailCompradorActual) {
-            return { 
-                valido: false, 
-                msg: `❌ Error de Permisos: Este cupón es exclusivo para otra cuenta de correo asignada.`, 
-                monto: 0 
-            };
+        if (cupon.clienteExclusivo) {
+            const emailExclusivoNormalizado = cupon.clienteExclusivo.toLowerCase().trim();
+            if (emailExclusivoNormalizado !== emailCompradorActual) {
+                return { 
+                    valido: false, 
+                    msg: `❌ Error de Permisos: Este cupón es exclusivo para otra cuenta de correo asignada.`, 
+                    monto: 0 
+                };
+            }
         }
 
         // COMPROBACIÓN EXIGIDA: El valor de la compra debe superar el monto del cupón
         if (subtotalCarrito <= cupon.monto) {
             return { 
                 valido: false, 
-                msg: `❌ Regla UTN: El monto del pedido ($${subtotalCarrito}) debe ser mayor al descuento ($${cupon.monto}).`, 
+                msg: `❌ Regla UTN: El monto del pedido ($${subtotalCarrito.toLocaleString('es-AR')}) debe ser mayor al descuento ($${cupon.monto.toLocaleString('es-AR')}).`, 
                 monto: 0 
             };
         }
 
-        return { valido: true, msg: `✅ ¡Cupón Aplicado! Descuento de $${cupon.monto} autorizado.`, monto: cupon.monto };
+        return { valido: true, msg: `✅ ¡Cupón Aplicado! Descuento de $${cupon.monto.toLocaleString('es-AR')} autorizado.`, monto: cupon.monto };
     },
 
     marcarComoUsado(codigo) {
@@ -71,7 +74,8 @@ const CuponService = {
         return false;
     },
 
-    guardarNuevoCupon(codigo, monto) {
+    // Ajustado para capturar la asignación opcional por cliente de tu admin-controller
+    guardarNuevoCupon(codigo, monto, clienteExclusivo = null) {
         let cupones = this.obtenerTodos();
         const codigoFormateado = codigo.toUpperCase().trim();
         
@@ -82,11 +86,11 @@ const CuponService = {
             codigo: codigoFormateado, 
             monto: parseInt(monto), 
             estado: "Activo",
-            clienteExclusivo: null 
+            clienteExclusivo: clienteExclusivo ? clienteExclusivo.toLowerCase().trim() : null 
         });
         
         localStorage.setItem('global-cupones', JSON.stringify(cupones));
-        return { exito: true, msg: `✅ Cupón general creado.` };
+        return { exito: true, msg: `✅ Cupón creado con éxito en el canal central.` };
     }
 };
 

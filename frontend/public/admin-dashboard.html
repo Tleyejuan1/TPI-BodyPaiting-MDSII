@@ -3,402 +3,92 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Body Art - Consola de Carga Suprema</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Dark Phase Admin - Inventario</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0;1&family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap');
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
-        .font-serif { font-family: 'Playfair Display', serif; }
-        
-        /* Asegura separación real por pestaña independiente */
-        .tab-content { display: none !important; }
-        .tab-content.active { display: block !important; }
-        .tab-content.grid.active { display: grid !important; }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-900 min-h-screen flex flex-col justify-between" onload="initAdminDashboard()">
+<body class="bg-gray-100 text-gray-800 min-h-screen flex flex-col uppercase text-xs tracking-wider" onload="cargarInventarioCompletoPanoramico();">
 
-    <!-- BARRA DE NAVEGACIÓN COMPLETA ORIGINAL -->
-    <nav class="bg-white border-b border-gray-100 sticky top-0 z-50 shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-20 items-center">
-                <div class="flex-shrink-0 flex items-center">
-                    <span class="flex items-center gap-2">
-                        <div class="w-12 h-12 rounded-full border-2 border-purple-600 flex items-center justify-center font-bold text-gray-800 text-sm">BODY</div>
-                        <span class="font-serif tracking-widest text-xl font-bold hidden sm:block text-purple-600">CONSOLA VENDEDOR</span>
-                    </span>
-                </div>
-                <div class="flex gap-4">
-                    <a href="productos.html" class="text-gray-500 hover:text-purple-600 font-medium text-xs uppercase tracking-widest border border-gray-200 px-4 py-2 rounded-full hover:bg-gray-50 flex items-center transition">Ver Sitio Público</a>
-                    <button onclick="cerrarSesion()" class="text-xs font-bold uppercase tracking-widest text-red-600 border border-red-200 px-4 py-2 rounded-full hover:bg-red-50 cursor-pointer">Salir</button>
+    <header class="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-purple-600 text-white rounded-full flex items-center justify-center font-bold text-sm">BA</div>
+                <div>
+                    <h1 class="font-bold text-gray-900 tracking-widest text-sm">Consola Administrativa</h1>
+                    <p class="text-[10px] text-purple-600 font-bold tracking-normal lowercase">Área de Gestión Corporativa</p>
                 </div>
             </div>
-        </div>
-    </nav>
-
-    <main class="flex-grow max-w-7xl w-full mx-auto px-4 py-8 space-y-6 text-xs">
-
-        <!-- SIMULADOR EXPIRACIÓN DE CÁTEDRA -->
-        <div class="bg-amber-50 border border-amber-200 p-4 rounded-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shadow-2xs">
-            <div>
-                <h4 class="font-bold uppercase tracking-widest text-amber-800"><i class="fa-solid fa-clock"></i> Simulador de Reglas de Negocio de Cátedra (UTN Villa María)</h4>
-                <p class="text-gray-600 mt-0.5">La empresa cierra pedidos sin reclamos tras 5 días hábiles. Presioná el gatillo para forzar la expiración de las órdenes entregadas.</p>
-            </div>
-            <div class="flex gap-2 w-full md:w-auto">
-                <button onclick="forzarExpiracionPlazo5Dias()" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold uppercase py-2.5 px-4 rounded-sm transition cursor-pointer">Forzar Expiración (5 Días)</button>
-                <button onclick="reinicioDeFabricaTotal()" class="w-full bg-gray-900 hover:bg-purple-700 text-white font-bold uppercase py-2.5 px-4 rounded-sm transition cursor-pointer">Reset Fábrica</button>
+            <div class="flex items-center gap-4">
+                <a href="productos.html" class="text-gray-500 hover:text-purple-600 font-bold text-[10px]">Ver Sitio Público</a>
+                <button onclick="cerrarSesion()" class="bg-gray-900 hover:bg-red-600 text-white font-bold px-4 py-2 rounded-sm cursor-pointer transition"><i class="fa-solid fa-power-off"></i> Salir</button>
             </div>
         </div>
+    </header>
 
-        <!-- TABS ORIGINALES REPARADAS -->
-        <div class="flex border-b border-gray-200 font-bold uppercase tracking-wider bg-white px-4 rounded-sm shadow-2xs">
-            <button onclick="switchTab('logistica')" id="tab-btn-logistica" class="p-4 text-purple-600 border-b-2 border-purple-600 flex items-center gap-2 cursor-pointer"><i class="fa-solid fa-truck-ramp-box"></i> Despachos & Incidencias</button>
-            <button onclick="switchTab('cupones')" id="tab-btn-cupones" class="p-4 text-gray-400 hover:text-gray-600 flex items-center gap-2 cursor-pointer"><i class="fa-solid fa-ticket"></i> Emitir Cupones</button>
-            <button onclick="switchTab('productos')" id="tab-btn-productos" class="p-4 text-gray-400 hover:text-gray-600 flex items-center gap-2 cursor-pointer"><i class="fa-solid fa-box-open"></i> Productos</button>
-            <button onclick="switchTab('videos')" id="tab-btn-videos" class="p-4 text-gray-400 hover:text-gray-600 flex items-center gap-2 cursor-pointer"><i class="fa-solid fa-video"></i> Porfolio</button>
-        </div>
-
-        <!-- TAB 1: LOGISTICA -->
-        <div id="tab-logistica" class="tab-content active bg-white border border-gray-200 rounded-sm shadow-sm overflow-hidden">
-            <table class="w-full text-left border-collapse">
-                <thead>
-                    <tr class="border-b bg-gray-100 text-gray-500 font-bold uppercase">
-                        <th class="p-4">ID Pedido</th><th class="p-4">Comprador / Destino</th><th class="p-4">Detalle Orden / Evidencia Reclamo</th><th class="p-4">Guía Andreani</th><th class="p-4">Estado</th><th class="p-4 text-center">Acciones Especiales</th>
-                    </tr>
-                </thead>
-                <tbody id="tabla-pedidos-admin" class="divide-y divide-gray-100"></tbody>
-            </table>
-        </div>
-
-        <!-- TAB 2: CUPONES -->
-        <div id="tab-cupones" class="tab-content grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="bg-white p-6 border border-gray-200 rounded-sm shadow-sm space-y-4 h-fit md:col-span-1">
-                <h3 class="font-serif text-base font-bold border-b pb-2 text-gray-800"><i class="fa-solid fa-plus text-purple-600"></i> Generar Cupón Específico</h3>
-                <form onsubmit="crearCuponVendedor(event)" class="space-y-3">
-                    <div>
-                        <label class="block font-bold text-gray-600 mb-1 uppercase">Código Único Beneficio</label>
-                        <input type="text" id="cup-codigo" required placeholder="PROMOVIP2026" class="w-full border p-2.5 bg-white rounded-sm uppercase tracking-widest font-mono">
-                    </div>
-                    <div>
-                        <label class="block font-bold text-gray-600 mb-1 uppercase">Monto de Descuento ($)</label>
-                        <input type="number" id="cup-monto" required placeholder="3000" class="w-full border p-2.5 bg-white rounded-sm">
-                    </div>
-                    <div>
-                        <label class="block font-bold text-gray-600 mb-1 uppercase">Seleccionar Cliente Destinatario</label>
-                        <select id="cup-cliente-select" required class="w-full border border-gray-300 p-2.5 rounded-sm bg-white font-medium focus:border-purple-600">
-                            <!-- Inyección dinámica -->
-                        </select>
-                    </div>
-                    <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold uppercase py-3 rounded-sm tracking-widest cursor-pointer">Emitir y Enviar por Mail</button>
-                </form>
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex-grow space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="bg-white p-5 rounded-sm border border-gray-200 flex items-center justify-between shadow-xs">
+                <div>
+                    <p class="text-gray-900 font-bold text-[10px] tracking-wide">Líneas Saludables</p>
+                    <p id="contador-stock-ok" class="text-2xl font-bold text-gray-900 mt-1">0</p>
+                </div>
+                <div class="text-green-600 text-base"><i class="fa-solid fa-circle-check"></i></div>
             </div>
-            <div class="bg-white border border-gray-200 rounded-sm shadow-sm overflow-hidden md:col-span-2">
-                <div class="p-4 border-b bg-gray-50 font-serif font-bold text-sm">Registro de Cupones Habilitados</div>
-                <table class="w-full text-left border-collapse">
-                    <thead><tr class="border-b bg-gray-100 text-gray-500 font-bold uppercase"><th class="p-4">Código</th><th class="p-4">Asignado a</th><th class="p-4">Descuento</th><th class="p-4">Estado</th></tr></thead>
-                    <tbody id="tabla-cupones-vendedor" class="divide-y divide-gray-100"></tbody>
-                </table>
+            <div class="bg-white p-5 rounded-sm border border-gray-200 flex items-center justify-between shadow-xs">
+                <div>
+                    <p class="text-gray-900 font-bold text-[10px] tracking-wide">Líneas Críticas</p>
+                    <p id="contador-stock-critico" class="text-2xl font-bold text-amber-600 mt-1">0</p>
+                </div>
+                <div class="text-amber-600 text-base animate-pulse"><i class="fa-solid fa-triangle-exclamation"></i></div>
+            </div>
+            <div class="bg-white p-5 rounded-sm border border-gray-200 flex items-center justify-between shadow-xs">
+                <div>
+                    <p class="text-gray-900 font-bold text-[10px] tracking-wide">Quiebres de Stock</p>
+                    <p id="contador-stock-cero" class="text-2xl font-bold text-red-600 mt-1">0</p>
+                </div>
+                <div class="text-red-600 text-base"><i class="fa-solid fa-box-open"></i></div>
             </div>
         </div>
 
-        <!-- TAB 3: PRODUCTOS -->
-        <div id="tab-productos" class="tab-content grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="bg-white p-6 border border-gray-200 rounded-sm shadow-sm space-y-4 h-fit md:col-span-1">
-                <div class="font-serif text-sm font-bold border-b pb-2 text-purple-600"><i class="fa-solid fa-circle-info"></i> Control de Altas Simples</div>
-                <form onsubmit="ejecutarAltaProducto(event)" class="space-y-3">
-                    <input type="text" id="prod-nombre" required placeholder="Nombre (Ej: Pintura Fluor Violeta)" class="w-full border p-2.5 bg-white rounded-sm">
-                    <input type="text" id="prod-desc" required placeholder="Código (Ej: PIN-FLU)" class="w-full border p-2.5 bg-white rounded-sm">
-                    <div class="grid grid-cols-2 gap-2">
-                        <input type="number" id="prod-precio" required placeholder="Precio ($)" class="w-full border p-2.5 bg-white rounded-sm">
-                        <input type="number" id="prod-stock" required placeholder="Stock Inicial" class="w-full border p-2.5 bg-white rounded-sm">
-                    </div>
-                    <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold uppercase py-3 rounded-sm tracking-widest">Publicar Nuevo Item</button>
-                </form>
+        <nav class="bg-white border border-gray-200 rounded-sm flex flex-wrap text-xs font-semibold uppercase tracking-wider shadow-xs">
+            <a href="admin-dashboard.html" class="p-4 text-purple-600 border-b-2 border-purple-600 flex items-center gap-2 font-bold"><i class="fa-solid fa-warehouse"></i> Inventario</a>
+            <a href="admin-alta-productos.html" class="p-4 text-gray-500 hover:text-purple-600 flex items-center gap-2 transition"><i class="fa-solid fa-square-plus"></i> Publicar Insumo</a>
+            <a href="admin-logistica.html" class="p-4 text-gray-500 hover:text-purple-600 flex items-center gap-2 transition"><i class="fa-solid fa-truck-ramp-box"></i> Envíos</a>
+            <a href="admin-cupones.html" class="p-4 text-gray-500 hover:text-purple-600 flex items-center gap-2 transition"><i class="fa-solid fa-ticket"></i> Cupones Club</a>
+            <a href="admin-porfolio.html" class="p-4 text-gray-500 hover:text-purple-600 flex items-center gap-2 transition"><i class="fa-solid fa-photo-film"></i> Porfolio Videos</a>
+        </nav>
+
+        <div class="space-y-4">
+            <div class="bg-white border border-gray-200 rounded-sm p-4 flex flex-col sm:flex-row justify-between items-center gap-4 shadow-xs">
+                <div class="font-bold text-gray-900"><i class="fa-solid fa-list-check"></i> Monitor Global de Stock</div>
+                <input type="text" id="buscador-inventario" onkeyup="filtrarTablaInventarioGeneral()" placeholder="Buscar por código o insumo..." class="border border-gray-300 p-2 bg-white rounded-sm focus:border-purple-600 outline-none font-medium text-gray-700 w-72 uppercase text-xs tracking-normal">
             </div>
-            <div class="bg-white border border-gray-200 rounded-sm shadow-sm overflow-hidden md:col-span-2">
-                <table class="w-full text-left border-collapse">
+            
+            <div class="bg-white border border-gray-200 rounded-sm overflow-x-auto shadow-xs">
+                <table class="w-full text-left border-collapse min-w-[700px]">
                     <thead>
-                        <tr class="border-b bg-gray-100 text-gray-500 font-bold uppercase">
-                            <th class="p-3">Código / Variante</th><th class="p-3">Item / Detalle</th><th class="p-3">Estado Stock Real</th><th class="p-3">Precio</th><th class="p-3 text-center">Acción</th>
+                        <tr class="bg-gray-50 border-b border-gray-200 font-bold text-gray-800 text-[10px] tracking-wider">
+                            <th class="p-4 w-16">Vista</th>
+                            <th class="p-4 w-28">Código</th>
+                            <th>Descripción</th>
+                            <th class="p-4 w-24">Stock</th>
+                            <th class="p-4 w-28">Estado</th>
+                            <th class="p-4 w-24">Precio</th>
+                            <th class="p-4 w-44 text-center">Acciones</th>
                         </tr>
                     </thead>
-                    <tbody id="lista-inventario-admin" class="divide-y divide-gray-100"></tbody>
+                    <tbody id="tabla-inventario-panoramica" class="divide-y divide-gray-100 font-bold text-gray-900 text-[11px] normal-case tracking-normal">
+                    </tbody>
                 </table>
             </div>
         </div>
-
-        <!-- TAB 4: VIDEOS PORFOLIO -->
-        <div id="tab-videos" class="tab-content grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="bg-white p-6 border border-gray-200 rounded-sm shadow-sm space-y-4 h-fit">
-                <form onsubmit="ejecutarAltaVideo(event)" class="space-y-3">
-                    <input type="text" id="vid-titulo" required placeholder="Título del Trabajo" class="w-full border p-2.5 bg-white rounded-sm">
-                    <textarea id="vid-desc" required placeholder="Reseña del Arte Corporal" class="w-full border p-2.5 bg-white rounded-sm" rows="3"></textarea>
-                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold uppercase py-3 rounded-sm tracking-widest">Publicar Video</button>
-                </form>
-            </div>
-            <div class="bg-white border border-gray-200 rounded-sm shadow-sm overflow-hidden md:col-span-2">
-                <div id="lista-videos-admin" class="p-4 space-y-3"></div>
-            </div>
-        </div>
-
     </main>
 
-    <!-- VENTANA EMERGENTE DE DEVOLUCIONES -->
-    <div id="modal-resolucion" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-        <div class="bg-white border border-gray-200 p-6 max-w-sm w-full space-y-4 shadow-2xl text-xs rounded-sm">
-            <div class="flex justify-between items-center border-b pb-2">
-                <h3 class="font-serif text-sm font-bold uppercase tracking-wider text-purple-600" id="modal-titulo">Gestión de Excepción</h3>
-                <button onclick="cerrarModalResolucion()" class="text-gray-400 hover:text-gray-600 cursor-pointer"><i class="fa-solid fa-xmark text-sm"></i></button>
-            </div>
-            <p class="text-gray-500 leading-relaxed" id="modal-descripcion"></p>
-            <div class="space-y-1">
-                <label class="block font-bold text-gray-700 uppercase">Resolución Comercial Pactada</label>
-                <select id="opcion-compensacion" class="w-full border border-gray-300 p-2 rounded-sm bg-white font-medium">
-                    <option value="dinero">Devolución total del Dinero (Reembolso)</option>
-                    <option value="cambio">Cambio de Productos (Orden de Crédito)</option>
-                </select>
-            </div>
-            <div class="space-y-1">
-                <label class="block font-bold text-gray-700 uppercase">Justificación Interna Auditoría</label>
-                <textarea id="motivo-incidencia" placeholder="Ingresá los motivos..." class="w-full border border-gray-300 p-2 rounded-sm bg-white h-20 focus:outline-none focus:border-purple-600"></textarea>
-            </div>
-            <div class="flex gap-2 pt-2 justify-end font-bold">
-                <button onclick="cerrarModalResolucion()" class="border px-4 py-2 text-gray-500 hover:bg-gray-50 rounded-sm cursor-pointer">Cerrar</button>
-                <button onclick="confirmarResolucionFinalVendedor()" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-sm cursor-pointer">Aplicar</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- CARGA DE SCRIPTS CENTRALIZADOS -->
-    <script src="cupon-notificacion-service.js"></script>
-    <script src="producto-service.js"></script>
-    <script src="video-service.js"></script>
-    <script src="cupon-service.js"></script>
     <script src="mail-service.js"></script>
-    <script src="devolución-service.js"></script>
-
-    <script>
-        let pedidoSeleccionadoId = null;
-        let tipoAccionActual = "";
-
-        function initAdminDashboard() {
-            cargarPedidosAdmin(); 
-            cargarCuponesVendedor(); 
-            cargarInventarioAdmin(); 
-            cargarVideosAdmin();
-            refrescarSelectorClientes();
-        }
-
-        // Interruptor estricto por solapas independientes
-        function switchTab(id) {
-            document.querySelectorAll('.tab-content').forEach(c => {
-                c.classList.remove('active');
-            });
-            
-            const tabActiva = document.getElementById(`tab-${id}`);
-            if (tabActiva) {
-                tabActiva.classList.add('active');
-            }
-            
-            ['logistica', 'cupones', 'productos', 'videos'].forEach(t => {
-                const btn = document.getElementById(`tab-btn-${t}`);
-                if (btn) {
-                    btn.className = t === id 
-                        ? "p-4 text-purple-600 border-b-2 border-purple-600 flex items-center gap-2 cursor-pointer font-bold" 
-                        : "p-4 text-gray-400 hover:text-gray-600 flex items-center gap-2 cursor-pointer";
-                }
-            });
-        }
-
-        // 🔥 FUNCIÓN REPARADA DEFINITIVA CONTRA VALORES UNDEFINED/NULL (Sincronizada con la captura)
-        function cargarInventarioAdmin() {
-            let prods = [];
-            try {
-                if (typeof ProductoService !== 'undefined') {
-                    prods = ProductoService.obtenerTodos();
-                } else {
-                    prods = JSON.parse(localStorage.getItem('catalogo-dinamico')) || [];
-                }
-            } catch (e) {
-                prods = JSON.parse(localStorage.getItem('catalogo-dinamico')) || [];
-            }
-            
-            const tabla = document.getElementById('lista-inventario-admin');
-            if(!tabla) return;
-            
-            tabla.innerHTML = prods.map(p => {
-                const esKit = p.codigo && p.codigo.includes("KIT");
-                
-                // Escudos de respaldo para asegurar consistencia de la base de datos local
-                const stockReal = p.stock !== undefined && p.stock !== null ? p.stock : 12; 
-                const minimoReal = p.minimo !== undefined && p.minimo !== null ? p.minimo : 4;
-                const idReal = p.id ? p.id : 1;
-                
-                const esCritico = !esKit && (stockReal <= minimoReal);
-                
-                const claseFila = esCritico ? "bg-red-50 text-red-900 border-l-4 border-l-red-600 font-medium" : "bg-white";
-                const iconoAlerta = esCritico ? "<i class='fa-solid fa-triangle-exclamation text-red-600 animate-pulse mr-1.5'></i>" : "";
-                const visualStock = esKit ? "<span class='text-purple-600 font-bold italic'>Auto-Composite</span>" : `${stockReal} u. (Mín: ${minimoReal}u)`;
-
-                return `
-                    <tr class="${claseFila}">
-                        <td class="p-3 font-mono font-bold">${p.codigo || 'S/C'}</td>
-                        <td class="p-3"><div><div class="font-bold">${p.nombre}</div></div></td>
-                        <td class="p-3 font-bold flex items-center mt-1.5">${iconoAlerta}${visualStock}</td>
-                        <td class="p-3 font-bold">$${p.precio}</td>
-                        <td class="p-3 text-center">
-                            ${esKit ? '-' : `<button onclick="ejecutarReabastecimiento(${idReal})" class="bg-gray-200 hover:bg-purple-600 hover:text-white text-gray-800 px-2 py-0.5 font-bold rounded-sm transition cursor-pointer">+10</button>`}
-                        </td>
-                    </tr>
-                `;
-            }).join('');
-        }
-
-        function ejecutarAltaProducto(e) { 
-            e.preventDefault(); 
-            ProductoService.agregar(document.getElementById('prod-nombre').value, document.getElementById('prod-desc').value, document.getElementById('prod-precio').value, document.getElementById('prod-stock').value); 
-            alert('Publicado con éxito.'); 
-            cargarInventarioAdmin(); 
-        }
-
-        function ejecutarReabastecimiento(id) { 
-            if (typeof ProductoService !== 'undefined' && ProductoService.sumarStockDiezUnidades) {
-                ProductoService.sumarStockDiezUnidades(id); 
-            } else {
-                let cat = JSON.parse(localStorage.getItem('catalogo-dinamico')) || [];
-                let pr = cat.find(x => x.id === id);
-                if(pr) { pr.stock = (pr.stock || 0) + 10; localStorage.setItem('catalogo-dinamico', JSON.stringify(cat)); }
-            }
-            cargarInventarioAdmin(); 
-        }
-
-        function cargarPedidosAdmin() {
-            const list = JSON.parse(localStorage.getItem('global-pedidos')) || [];
-            const tabla = document.getElementById('tabla-pedidos-admin');
-            if(!tabla) return;
-            if(list.length === 0) { tabla.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-gray-400 italic">No hay órdenes en cola.</td></tr>`; return; }
-            
-            tabla.innerHTML = list.map(p => {
-                let selectorDeEstados = ""; let bloqueEvidenciaReclamo = "";
-
-                if (p.reclamoCliente) {
-                    bloqueEvidenciaReclamo = `
-                        <div class="mt-2 p-2 bg-red-50 text-red-900 text-[11px] rounded-sm border border-red-100 space-y-1">
-                            <p class="font-bold border-b pb-0.5"><i class="fa-solid fa-triangle-exclamation text-red-600"></i> DISPUTA ABIERTA POR TATUADOR</p>
-                            <p>• <strong>Motivo ML:</strong> ${p.reclamoCliente.motivo}</p>
-                            <p>• <strong>Mensaje:</strong> "${p.reclamoCliente.descripcion}"</p>
-                        </div>
-                    `;
-                }
-
-                if (p.estado.includes("Reclamo Abierto")) {
-                    selectorDeEstados = `<button onclick="levantarModalResolucion('${p.id}', 'RESOLVER_DISPUTA_CLIENTE')" class="bg-red-600 text-white font-bold text-[10px] uppercase px-3 py-2 rounded-sm hover:bg-red-700 cursor-pointer text-center w-full">Dictaminar Reclamo</button>`;
-                } else if (p.estado.includes("Cancelado") || p.estado.includes("Reembolsado") || p.estado === "Finalizado (Plazo Expirado)") {
-                    selectorDeEstados = `<span class="text-gray-400 italic font-medium">Ciclo Concluido</span>`;
-                } else {
-                    selectorDeEstados = `
-                        <div class="space-y-2 w-full">
-                            <select onchange="cambiarEstadoDesdeSelector('${p.id}', this.value)" class="w-full border border-gray-300 p-1.5 rounded-sm bg-white font-bold text-[10px] uppercase text-gray-700 focus:border-purple-600">
-                                <option value="Pendiente" ${p.estado === 'Pendiente' ? 'selected' : ''}>⏳ Pendiente</option>
-                                <option value="En Preparación" ${p.estado === 'En Preparación' ? 'selected' : ''}>📦 En Preparación</option>
-                                <option value="Recibido por Andreani" ${p.estado === 'Recibido por Andreani' ? 'selected' : ''}>🚛 Recibido por Andreani</option>
-                                <option value="Entregado" ${p.estado === 'Entregado' ? 'selected' : ''}>✅ Entregado</option>
-                            </select>
-                            <button onclick="levantarModalResolucion('${p.id}', 'INCIDENCIA_EMPRESA')" class="w-full bg-gray-100 text-gray-600 font-bold text-[9px] uppercase py-1 rounded-sm hover:bg-red-50 hover:text-red-600 transition cursor-pointer">Cancelar s/Stock</button>
-                        </div>
-                    `;
-                }
-
-                return `
-                    <tr class="${p.estado.includes('Reclamo') || p.estado.includes('Cancelado') ? 'bg-red-50/40 text-red-900 border-l-4 border-l-red-600' : ''}">
-                        <td class="p-4 font-bold text-purple-600">${p.id}</td>
-                        <td class="p-4"><strong>${p.clienteNombre}</strong><br>${p.clienteEmail}<br><span class="text-gray-500 font-medium">${p.destino || 'Villa María'}</span></td>
-                        <td class="p-4"><strong>${p.detalle}</strong><br><span class="text-purple-600 font-bold">$${p.total}</span>${bloqueEvidenciaReclamo}</td>
-                        <td class="p-4 font-mono font-bold text-gray-700">${p.tracking}</td>
-                        <td class="p-4">
-                            <span class="px-2 py-0.5 rounded-sm font-bold text-[10px] uppercase tracking-wider 
-                                ${p.estado === 'Pendiente' ? 'bg-amber-100 text-amber-800' : ''}
-                                ${p.estado === 'En Preparación' ? 'bg-blue-100 text-blue-800' : ''}
-                                ${p.estado === 'Recibido por Andreani' ? 'bg-purple-100 text-purple-800' : ''}
-                                ${p.estado === 'Entregado' ? 'bg-green-100 text-green-800' : ''}
-                            ">${p.estado}</span>
-                        </td>
-                        <td class="p-4 text-center w-40">${selectorDeEstados}</td>
-                    </tr>
-                `;
-            }).join('');
-        }
-
-        function cambiarEstadoDesdeSelector(idPedido, nuevoEstado) {
-            const ordenModificada = DevolucionService.actualizarEstadoPedidoManual(idPedido, nuevoEstado);
-            if (ordenModificada) { alert(`📌 Estado actualizado a: ${nuevoEstado}`); cargarPedidosAdmin(); }
-        }
-
-        function levantarModalResolucion(id, tipo) {
-            pedidoSeleccionadoId = id; tipoAccionActual = tipo;
-            document.getElementById('modal-titulo').innerText = tipo === 'INCIDENCIA_EMPRESA' ? "Falta de Stock / Error Almacén" : "Dictaminar Reclamo Comprador";
-            document.getElementById('modal-descripcion').innerText = tipo === 'INCIDENCIA_EMPRESA' ? "Problema de stock detectado en depósito." : "Disputa abierta por el cliente.";
-            document.getElementById('modal-resolucion').classList.remove('hidden');
-        }
-
-        function cerrarModalResolucion() { document.getElementById('modal-resolucion').classList.add('hidden'); document.getElementById('motivo-incidencia').value = ""; }
-
-        function confirmarResolucionFinalVendedor() {
-            const compensacion = document.getElementById('opcion-compensacion').value;
-            const motivo = document.getElementById('motivo-incidencia').value.trim();
-            if(!motivo) { alert('Completá la justificación.'); return; }
-            const resultado = DevolucionService.procesarResolucion(pedidoSeleccionadoId, compensacion, tipoAccionActual, motivo);
-            if(resultado) { alert('Resolución ejecutada.'); cerrarModalResolucion(); cargarPedidosAdmin(); }
-        }
-
-        function forzarExpiracionPlazo5Dias() {
-            let list = JSON.parse(localStorage.getItem('global-pedidos')) || []; let mod = 0;
-            list.forEach(p => { if(p.estado === "Entregado") { p.estado = "Finalizado (Plazo Expirado)"; mod++; } });
-            if(mod > 0) { localStorage.setItem('global-pedidos', JSON.stringify(list)); alert(`Plazo cerrado.`); cargarPedidosAdmin(); }
-        }
-
-        function refrescarSelectorClientes() {
-            const todosUsuarios = JSON.parse(localStorage.getItem('global-usuarios')) || [];
-            const clientesFiltrados = todosUsuarios.filter(u => u.rol !== 'ADMIN');
-            const select = document.getElementById('cup-cliente-select');
-            if(select) select.innerHTML = clientesFiltrados.map(u => `<option value="${u.email}">${u.nombre} (${u.email})</option>`).join('');
-        }
-
-        function crearCuponVendedor(e) {
-            e.preventDefault();
-            const res = CuponNotificacionService.asignarYNotificarCuponACliente(document.getElementById('cup-codigo').value, document.getElementById('cup-monto').value, document.getElementById('cup-cliente-select').value);
-            alert(res.msg); if (res.exito) { cargarCuponesVendedor(); }
-        }
-
-        function cargarCuponesVendedor() {
-            const cupones = JSON.parse(localStorage.getItem('global-cupones')) || [];
-            const tabla = document.getElementById('tabla-cupones-vendedor');
-            if(tabla) tabla.innerHTML = cupones.map(c => `<tr><td class="p-4 font-mono font-bold text-purple-600">${c.codigo}</td><td class="p-4">${c.clienteExclusivo}</td><td class="p-4 font-bold">$${c.monto}</td><td class="p-4"><span class="px-2 py-0.5 rounded-sm bg-green-100 text-green-800">${c.estado}</span></td></tr>`).join('');
-        }
-
-        function cargarVideosAdmin() {
-            const vids = VideoService ? VideoService.obtenerTodos() : [];
-            const lista = document.getElementById('lista-videos-admin');
-            if(lista) lista.innerHTML = vids.map(v => `<div class="flex justify-between items-center bg-gray-50 p-3 rounded-sm border"><div><h5 class="font-bold">${v.titulo}</h5></div></div>`).join('');
-        }
-
-        function ejecutarAltaVideo(e) { e.preventDefault(); VideoService.agregar(document.getElementById('vid-titulo').value, document.getElementById('vid-desc').value); alert('Video subido.'); cargarVideosAdmin(); }
-
-        function reinicioDeFabricaTotal() {
-            if(confirm('¿Desea restaurar el inventario oficial de Body Paint con los 9 artículos reales?')) {
-                localStorage.removeItem('catalogo-dinamico');
-                localStorage.removeItem('global-inventario');
-                localStorage.removeItem('global-pedidos');
-                localStorage.removeItem('global-cupones');
-                if (typeof ProductoService !== 'undefined' && ProductoService.restaurarFabrica) {
-                    ProductoService.restaurarFabrica();
-                }
-                window.location.reload();
-            }
-        }
-
-        function cerrarSesion() { localStorage.removeItem('usuario-sesion'); window.location.href = 'index.html'; }
-    </script>
+    <script src="admin-controller.js"></script>
 </body>
 </html>

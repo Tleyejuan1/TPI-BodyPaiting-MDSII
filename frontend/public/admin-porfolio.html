@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dark Phase Admin - Porfolio Videos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800 min-h-screen flex flex-col uppercase text-xs tracking-wider" onload="cargarVideosAdmin();">
+
+    <header class="bg-white border-b border-gray-200 h-20 flex justify-between items-center px-8 sticky top-0 z-50">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-purple-600 text-white rounded-full flex items-center justify-center font-bold text-sm">BA</div>
+            <h1 class="font-bold text-gray-900 tracking-widest text-sm">Consola Administrativa</h1>
+        </div>
+        <a href="videos.html" class="text-xs font-bold uppercase tracking-widest text-purple-600 border border-purple-200 px-4 py-2 rounded-full hover:bg-purple-50 transition">Ver Sitio Público</a>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex-grow space-y-6">
+        <nav class="bg-white border-b border-gray-200 flex flex-wrap text-xs font-medium uppercase tracking-wider">
+            <a href="admin-dashboard.html" class="p-4 text-gray-400 hover:text-gray-600 flex items-center gap-2"><i class="fa-solid fa-warehouse"></i> Inventario</a>
+            <a href="admin-alta-productos.html" class="p-4 text-gray-400 hover:text-gray-600 flex items-center gap-2"><i class="fa-solid fa-square-plus"></i> Publicar Insumo</a>
+            <a href="admin-logistica.html" class="p-4 text-gray-400 hover:text-gray-600 flex items-center gap-2"><i class="fa-solid fa-truck-ramp-box"></i> Envíos</a>
+            <a href="admin-cupones.html" class="p-4 text-gray-400 hover:text-gray-600 flex items-center gap-2"><i class="fa-solid fa-ticket"></i> Cupones Club</a>
+            <a href="admin-porfolio.html" class="p-4 text-purple-600 border-b-2 border-purple-600 flex items-center gap-2 font-bold"><i class="fa-solid fa-photo-film"></i> Porfolio Videos</a>
+        </nav>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-white p-6 border border-gray-200 rounded-sm shadow-sm space-y-4 h-fit">
+                <div class="text-sm font-bold border-b pb-2 text-purple-600"><i class="fa-solid fa-photo-film"></i> Publicar Trabajo Corporal</div>
+                <form id="form-alta-video" onsubmit="ejecutarAltaVideo(event)" class="space-y-3">
+                    <div>
+                        <label class="block font-bold text-gray-600 mb-1 uppercase">Título del Video</label>
+                        <input type="text" id="vid-titulo" required placeholder="Ej: Maquillaje FX Neón Calavera" class="w-full border p-2.5 bg-white rounded-sm focus:border-purple-600 outline-none font-medium">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-gray-600 mb-1 uppercase">Reseña o Descripción</label>
+                        <textarea id="vid-desc" required placeholder="Ej: Sesión en vivo realizada con pigmentos reactivos..." class="w-full border p-2.5 bg-white rounded-sm focus:border-purple-600 outline-none font-medium h-16 resize-none"></textarea>
+                    </div>
+                    <div>
+                        <label class="block font-bold text-gray-600 mb-1 uppercase">Origen del Video</label>
+                        <select id="vid-origen" onchange="conmutarModoVideo()" class="w-full border p-2 bg-white rounded-sm font-bold focus:border-purple-600 outline-none">
+                            <option value="url">Enlace Web (URL mp4 Remota)</option>
+                            <option value="pc">Subir archivo mp4 desde PC</option>
+                        </select>
+                    </div>
+                    <div id="contenedor-vid-url">
+                        <label class="block font-bold text-gray-600 mb-1 uppercase">Enlace URL del Video</label>
+                        <input type="text" id="vid-url-input" placeholder="https://tu-servidor.com/video.mp4" class="w-full border p-2.5 bg-white rounded-sm focus:border-purple-600 outline-none font-medium text-[11px] tracking-normal">
+                    </div>
+                    <div id="contenedor-vid-file" class="hidden">
+                        <label class="block font-bold text-gray-600 mb-1 uppercase">Seleccionar Video de PC</label>
+                        <input type="file" id="vid-file-input" accept="video/mp4,video/webm" onchange="procesarVideoLocal(this)" class="w-full border p-2 bg-white rounded-sm file:mr-4 file:py-1 file:px-3 file:rounded-sm file:border-0 file:text-xs file:font-bold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100 cursor-pointer">
+                    </div>
+                    <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold uppercase py-3 rounded-sm tracking-widest transition cursor-pointer">Publicar Video</button>
+                </form>
+            </div>
+
+            <div class="bg-white border border-gray-200 rounded-sm shadow-sm overflow-hidden md:col-span-2">
+                <div class="p-4 border-b bg-gray-50 font-bold text-gray-700">Contenidos del Porfolio en Línea (Consola)</div>
+                <div id="lista-videos-admin" class="p-4 space-y-3"></div>
+            </div>
+        </div>
+    </main>
+
+    <script src="admin-controller.js"></script>
+</body>
+</html>

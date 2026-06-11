@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Body Art - Pasarela de Pago Oficial</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link class="text-purple-600" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0;1&family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap');
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
         .font-serif { font-family: 'Playfair Display', serif; }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-900 min-h-screen flex flex-col justify-between" onload="initPasarelaCheckout()">
+<body class="bg-gray-50 text-gray-900 min-h-screen flex flex-col justify-between" id="cuerpo-checkout-global" onload="initPasarelaCheckout()">
 
     <!-- BARRA DE NAVEGACIÓN -->
     <nav class="bg-white border-b border-gray-100 sticky top-0 z-50 shadow-sm">
@@ -36,15 +36,14 @@
         </div>
     </nav>
 
+    <!-- FORMULARIO DE LIQUIDACIÓN Y PASARELA DE CHECKOUT -->
     <main class="flex-grow max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full grid grid-cols-1 lg:grid-cols-3 gap-8">
         
-        <!-- DETALLE DEL CARRITO (Columna Izquierda) -->
         <div class="bg-white border border-gray-200 rounded-sm p-6 shadow-sm lg:col-span-2 space-y-6">
             <h2 class="font-serif text-2xl uppercase tracking-wider border-b pb-4"><i class="fa-solid fa-shopping-bag mr-2 text-purple-600"></i>Revisión de tu Pedido</h2>
             
             <div id="items-checkout" class="space-y-4 divide-y divide-gray-100"></div>
             
-            <!-- CONTENEDOR CUPONES (Módulo Externo) -->
             <div class="bg-gray-50 p-4 rounded-sm space-y-2 border border-gray-100">
                 <p class="text-xs font-bold uppercase tracking-wider text-gray-600">¿Tenés un cupón de descuento de la empresa?</p>
                 <div class="flex gap-2">
@@ -54,28 +53,26 @@
                 <div id="msg-cupon" class="text-xs font-medium hidden"></div>
             </div>
 
-            <!-- PRECIOS FINALES -->
             <div class="text-right font-medium text-gray-700 pt-4 border-t space-y-1 text-xs">
                 <div>Subtotal Neto: <span id="subtotal-neto" class="font-bold text-gray-600">$0</span></div>
                 <div class="text-red-600 hidden" id="fila-descuento">Beneficio Cupón: -<span id="monto-descuento">$0</span></div>
                 <div class="text-2xl font-serif text-gray-900 pt-2">Total a Liquidar: <span id="total-precio" class="font-bold text-purple-600">$0</span></div>
             </div>
+            
+            <div id="alerta-pasarela-flotante" class="text-center font-bold text-xs uppercase p-3 rounded-sm bg-purple-50 text-purple-700 tracking-wider border border-purple-100 hidden"></div>
         </div>
 
-        <!-- LOGÍSTICA DE DESPACHO Y FORMULARIO DE TARJETA (Columna Derecha) -->
         <div class="bg-white border border-gray-200 rounded-sm p-6 shadow-sm space-y-6 h-fit text-xs">
             <h3 class="text-xs font-bold uppercase tracking-widest text-gray-400 border-b pb-2">Despacho & Facturación</h3>
             
-            <!-- DIRECCIONES -->
             <div class="space-y-2">
                 <label class="block font-bold text-gray-700 uppercase">Destino de la Encomienda</label>
-                <select id="selector-direccion" onchange="manejarCambioDireccion()" class="w-full border border-gray-300 p-2.5 rounded-sm bg-white text-xs focus:border-purple-600">
+                <select id="selector-direccion" onchange="manejarCambioDireccion()" class="w-full border border-gray-300 p-2.5 rounded-sm bg-white text-xs focus:border-purple-600 select-pointer">
                     <option value="guardada">Enviar a mi Dirección Predefinida</option>
                     <option value="nueva">Registrar otra Dirección de Despacho...</option>
                 </select>
-                <div id="caja-dir-guardada" class="bg-gray-50 border border-gray-200 p-3 text-gray-600 rounded-sm"></div>
+                <div id="caja-dir-guardada" class="bg-gray-50 border border-gray-200 p-3 text-gray-600 rounded-sm mt-2 font-semibold"></div>
                 
-                <!-- FORMULARIO NUEVA DIRECCIÓN COMPLETO -->
                 <div id="campos-dir-nueva" class="hidden space-y-2 p-3 bg-purple-50/40 border border-purple-100 rounded-sm">
                     <input type="text" id="new-pais" placeholder="País (Ej: Argentina)" class="w-full border border-gray-300 p-2 bg-white rounded-sm">
                     <input type="text" id="new-provincia" placeholder="Provincia (Ej: Córdoba)" class="w-full border border-gray-300 p-2 bg-white rounded-sm">
@@ -87,7 +84,6 @@
                 </div>
             </div>
 
-            <!-- MÉTODOS DE PAGO -->
             <div class="space-y-2">
                 <label class="block font-bold text-gray-700 uppercase">Canal de Pago autorizado</label>
                 <div class="space-y-2">
@@ -96,7 +92,6 @@
                     <label class="flex items-center gap-2 p-2.5 border rounded-sm bg-white cursor-pointer hover:bg-gray-50"><input type="radio" name="metodo-pago" value="Tarjeta" onchange="manejarCambioTarjeta()"><span>Tarjeta de Débito / Crédito</span></label>
                 </div>
 
-                <!-- FORMULARIO DETALLADO DE TARJETA NUEVA -->
                 <div id="campos-tarjeta-nueva" class="hidden space-y-2 p-3 bg-gray-50 border border-gray-200 rounded-sm">
                     <p class="text-[10px] font-bold uppercase text-purple-600 mb-1"><i class="fa-solid fa-credit-card mr-1"></i> Formulario de Carga de Tarjeta Nueva</p>
                     <div>
@@ -128,7 +123,7 @@
         &copy; 2026 Body Art Studio. Todos los derechos reservados.
     </footer>
 
-    <!-- INYECCIÓN DE LA CAPA DE SERVICIOS INDEPENDIENTES -->
+    <!-- INCLUSIÓN DE TUS SCRIPTS INTEGRADOS -->
     <script src="carrito-service.js"></script>
     <script src="cupon-service.js"></script>
     <script src="mail-service.js"></script>
@@ -139,76 +134,86 @@
         const usuarioSesion = JSON.parse(localStorage.getItem('usuario-sesion'));
 
         function initPasarelaCheckout() {
-            renderizarItemsCheckout();
-            
-            const cajaDir = document.getElementById('caja-dir-guardada');
-            if(usuarioSesion && usuarioSesion.direccion && usuarioSesion.direccion.calle) {
-                const d = usuarioSesion.direccion;
-                cajaDir.innerHTML = `<p class="mt-1">${d.calle} ${d.nro}, ${d.localidad} (${d.provincia})</p>`;
-            } else {
-                cajaDir.innerHTML = `<p class="text-amber-600 italic">No hay dirección predefinida.</p>`;
-                document.getElementById('selector-direccion').value = "nueva"; manejarCambioDireccion();
+            // 🔥 FIX EVASIVO DE SEGURIDAD: Remueve capas oscuras heredadas
+            const bodyCentral = document.getElementById('cuerpo-checkout-global');
+            if(bodyCentral) {
+                bodyCentral.className = "bg-gray-50 text-gray-900 min-h-screen flex flex-col justify-between overflow-y-auto";
+                bodyCentral.style.filter = "none";
+                bodyCentral.style.pointerEvents = "auto";
             }
 
-            // ESCUCHADORES AUTOMÁTICOS PARA LAS MÁSCARAS DE LA TARJETA
+            renderizerItemsCheckout();
+            
+            const cajaDir = document.getElementById('caja-dir-guardada');
+            if(usuarioSesion && usuarioSesion.direccion) {
+                cajaDir.innerHTML = `<p class="mt-1 uppercase text-xs font-bold text-gray-900">${usuarioSesion.direccion}</p>`;
+            } else {
+                cajaDir.innerHTML = `<p class="text-amber-600 italic font-bold">No hay dirección predefinida en tu perfil.</p>`;
+                document.getElementById('selector-direccion').value = "nueva"; 
+                manejarCambioDireccion();
+            }
+
             configurarMascarasTarjeta();
         }
 
-        // FUNCIÓN UX: Formatea MM/AA con barra automática y limita el CVC a 3 dígitos estrictos
         function configurarMascarasTarjeta() {
             const inputVencimiento = document.getElementById('card-expiry');
             const inputCVC = document.getElementById('card-cvc');
 
             if (inputVencimiento) {
                 inputVencimiento.addEventListener('input', function(e) {
-                    let valor = e.target.value.replace(/\D/g, ""); // Borrar letras
-                    if (valor.length === 1 && valor > 1) {
-                        valor = "0" + valor; // Auto-cero para meses de un dígito altos (ej: 5 -> 05)
-                    }
-                    if (valor.length > 2) {
-                        valor = valor.substring(0, 2) + "/" + valor.substring(2, 4); // Clavar barra divisional
-                    }
+                    let valor = e.target.value.replace(/\D/g, "");
+                    if (valor.length === 1 && valor > 1) { valor = "0" + valor; }
+                    if (valor.length > 2) { valor = valor.substring(0, 2) + "/" + valor.substring(2, 4); }
                     e.target.value = valor;
                 });
             }
 
             if (inputCVC) {
                 inputCVC.addEventListener('input', function(e) {
-                    let valor = e.target.value.replace(/\D/g, ""); // Dejar solo números
-                    if (valor.length > 3) {
-                        valor = valor.substring(0, 3); // Corte estricto en 3 caracteres
-                    }
+                    let valor = e.target.value.replace(/\D/g, "");
+                    if (valor.length > 3) { valor = valor.substring(0, 3); }
                     e.target.value = valor;
                 });
             }
         }
 
-        function renderizarItemsCheckout() {
-            const carrito = CarritoService.obtain ? CarritoService.obtain() : CarritoService.obtener();
+        function renderizerItemsCheckout() {
+            const carrito = typeof CarritoService !== 'undefined' ? CarritoService.obtener() : (JSON.parse(localStorage.getItem('carrito-bodyart')) || []);
             const contenedor = document.getElementById('items-checkout');
             
+            if (!contenedor) return;
+
             if (carrito.length === 0) {
-                contenedor.innerHTML = `<p class="text-gray-400 text-sm text-center py-8">No hay ítems cargados en la sesión del carrito.</p>`;
+                contenedor.innerHTML = `<p class="text-gray-400 text-sm text-center py-8 font-bold">No hay ítems cargados en la sesión del carrito.</p>`;
                 document.getElementById('total-precio').innerText = "$0";
                 document.getElementById('subtotal-neto').innerText = "$0";
+                document.getElementById('fila-descuento').classList.add('hidden');
                 return;
             }
 
-            contenedor.innerHTML = carrito.map(item => `
-                <div class="flex items-center justify-between py-4 first:pt-0">
-                    <div>
-                        <h4 class="font-medium text-gray-900 text-sm">${item.nombre}</h4>
-                        <p class="text-gray-500 text-xs">${item.cantidad} unidades x $${item.precio.toLocaleString('es-AR')}</p>
-                    </div>
-                    <div class="flex items-center gap-6">
-                        <span class="font-bold text-gray-900">$${(item.precio * item.cantidad).toLocaleString('es-AR')}</span>
-                        <button onclick="removerItemCheckout(${item.id})" class="text-gray-400 hover:text-red-600 transition cursor-pointer p-1"><i class="fa-solid fa-trash-can"></i></button>
-                    </div>
-                </div>
-            `).join('');
+            let subtotalCalculado = 0;
+            let htmlInyeccion = "";
 
-            const subtotal = CarritoService.calcularSubtotal();
-            document.getElementById('subtotal-neto').innerText = `$${subtotal.toLocaleString('es-AR')}`;
+            carrito.forEach(item => {
+                const subtotalItem = item.precio * item.cantidad;
+                subtotalCalculado += subtotalItem;
+
+                htmlInyeccion += `
+                    <div class="flex items-center justify-between py-4 first:pt-0">
+                        <div>
+                            <h4 class="font-bold text-gray-900 text-sm uppercase tracking-wide">${item.nombre}</h4>
+                            <p class="text-purple-600 text-xs font-bold mt-0.5">${item.cantidad} unidades x $${item.precio.toLocaleString('es-AR')}</p>
+                        </div>
+                        <div class="flex items-center gap-6">
+                            <span class="font-bold text-gray-900">$${subtotalItem.toLocaleString('es-AR')}</span>
+                            <button onclick="removerItemCheckout(${item.id})" class="text-gray-400 hover:text-red-600 transition cursor-pointer p-1"><i class="fa-solid fa-trash-can"></i></button>
+                        </div>
+                    </div>`;
+            });
+
+            contenedor.innerHTML = htmlInyeccion;
+            document.getElementById('subtotal-neto').innerText = `$${subtotalCalculado.toLocaleString('es-AR')}`;
             
             if (descuentoAplicado > 0) {
                 document.getElementById('fila-descuento').classList.remove('hidden');
@@ -216,36 +221,68 @@
             } else {
                 document.getElementById('fila-descuento').classList.add('hidden');
             }
-            document.getElementById('total-precio').innerText = `$${(subtotal - descuentoAplicado).toLocaleString('es-AR')}`;
+            
+            const precioFinalCalculado = Math.max(0, subtotalCalculado - descuentoAplicado);
+            document.getElementById('total-precio').innerText = `$${precioFinalCalculado.toLocaleString('es-AR')}`;
         }
 
         function removerItemCheckout(id) {
-            CarritoService.remover(id);
-            descuentoAplicado = 0; cuponCodigoActivo = "";
-            document.getElementById('msg-cupon').classList.add('hidden');
-            renderizarItemsCheckout();
+            if (typeof CarritoService !== 'undefined') {
+                CarritoService.remover(id);
+            } else {
+                let carrito = JSON.parse(localStorage.getItem('carrito-bodyart')) || [];
+                carrito = carrito.filter(item => item.id != id);
+                localStorage.setItem('carrito-bodyart', JSON.stringify(carrito));
+            }
+            
+            descuentoAplicado = 0; 
+            cuponCodigoActivo = "";
+            const msgCupon = document.getElementById('msg-cupon');
+            if (msgCupon) msgCupon.classList.add('hidden');
+            
+            renderizerItemsCheckout();
         }
 
         function ejecutarValidacionCupon() {
-            const cod = document.getElementById('input-cupon').value;
-            const subtotal = CarritoService.calcularSubtotal();
-            
-            const res = CuponService.validarCupon(cod, subtotal);
+            const cod = document.getElementById('input-cupon').value.trim().toUpperCase();
             const msg = document.getElementById('msg-cupon');
-            msg.className = "text-xs font-medium block"; msg.innerText = res.msg;
+            if(!msg) return;
 
-            if(res.valido) {
-                descuentoAplicado = res.monto; cuponCodigoActivo = cod.toUpperCase().trim();
+            msg.className = "text-xs font-bold block mt-2";
+            msg.classList.remove('hidden');
+
+            const subtotalActual = typeof CarritoService !== 'undefined' ? CarritoService.calcularSubtotal() : 
+                (JSON.parse(localStorage.getItem('carrito-bodyart')) || []).reduce((acc, item) => acc + (item.precio * item.cantidad), 0);
+
+            if (typeof CuponService !== 'undefined') {
+                const res = CuponService.validarCupon(cod, subtotalActual);
+                if (res.valido) {
+                    descuentoAplicado = res.monto;
+                    cuponCodigoActivo = cod;
+                    msg.className = "text-xs font-bold text-green-600 block mt-2";
+                    msg.innerText = res.msg;
+                } else {
+                    descuentoAplicado = 0;
+                    cuponCodigoActivo = "";
+                    msg.className = "text-xs font-bold text-red-600 block mt-2";
+                    msg.innerText = res.msg;
+                }
             } else {
-                descuentoAplicado = 0; cuponCodigoActivo = "";
+                if (cod === "UTN2026") {
+                    descuentoAplicado = 2000; cuponCodigoActivo = "UTN2026";
+                    msg.className = "text-xs font-bold text-green-600 block mt-2"; msg.innerText = "✅ Cupón UTN2026 aplicado.";
+                } else {
+                    descuentoAplicado = 0; cuponCodigoActivo = "";
+                    msg.className = "text-xs font-bold text-red-600 block mt-2"; msg.innerText = "❌ Cupón inválido.";
+                }
             }
-            renderizarItemsCheckout();
+            renderizerItemsCheckout();
         }
 
         function manejarCambioDireccion() {
             const op = document.getElementById('selector-direccion').value;
             document.getElementById('campos-dir-nueva').className = op === 'nueva' ? 'space-y-2 p-3 bg-purple-50/40 border border-purple-100 rounded-sm mt-2' : 'hidden';
-            document.getElementById('caja-dir-guardada').className = op === 'guardada' ? 'bg-gray-50 border border-gray-200 p-3 text-gray-600 rounded-sm mt-2' : 'hidden';
+            document.getElementById('caja-dir-guardada').className = op === 'guardada' ? 'bg-gray-50 border border-gray-200 p-3 text-gray-900 font-bold rounded-sm mt-2 uppercase' : 'hidden';
         }
 
         function manejarCambioTarjeta() {
@@ -253,26 +290,47 @@
             document.getElementById('campos-tarjeta-nueva').className = met === 'Tarjeta' ? 'space-y-2 p-3 bg-gray-50 border border-gray-200 rounded-sm mt-2' : 'hidden';
         }
 
+        function lanzarAvisoFlotantePasarela(mensaje, esExito) {
+            const contenedorAviso = document.getElementById('alerta-pasarela-flotante');
+            if(!contenedorAviso) return;
+            
+            contenedorAviso.classList.remove('hidden');
+            contenedorAviso.className = esExito 
+                ? "text-center font-bold text-xs uppercase p-4 rounded-sm bg-green-50 text-green-700 tracking-wider border border-green-100 block mt-4"
+                : "text-center font-bold text-xs uppercase p-4 rounded-sm bg-red-50 text-red-700 tracking-wider border border-red-100 block mt-4";
+            contenedorAviso.innerText = mensaje;
+            
+            if(esExito) {
+                setTimeout(() => {
+                    contenedorAviso.classList.add('hidden');
+                    window.location.href = 'productos.html';
+                }, 3500);
+            }
+        }
+
         function ejecutarCompraFinalCheckout() {
-            const carrito = CarritoService.obtain ? CarritoService.obtain() : CarritoService.obtener();
+            const carrito = typeof CarritoService !== 'undefined' ? CarritoService.obtener() : (JSON.parse(localStorage.getItem('carrito-bodyart')) || []);
             if(carrito.length === 0) return;
 
-            const mailComprador = usuarioSesion ? usuarioSesion.email : "comprador@utn.com";
-            const nomComprador = usuarioSesion ? usuarioSesion.nombre : "Comprador Express";
+            const mailComprador = usuarioSesion ? usuarioSesion.email : "juan@mail.com";
+            const nomComprador = usuarioSesion ? usuarioSesion.nombre : "Juan Cruz Tleye";
             const met = document.querySelector('input[name="metodo-pago"]:checked').value;
             const opEnvio = document.getElementById('selector-direccion').value;
             
             let destinoFinal = "";
-            if (opEnvio === 'guardada' && usuarioSesion && usuarioSesion.direccion && usuarioSesion.direccion.calle) {
-                const d = usuarioSesion.direccion; destinoFinal = `${d.calle} ${d.nro}, ${d.localidad}`;
+            if (opEnvio === 'guardada' && usuarioSesion && usuarioSesion.direccion) {
+                destinoFinal = usuarioSesion.direccion;
             } else {
                 const loc = document.getElementById('new-localidad').value.trim();
                 const cal = document.getElementById('new-calle').value.trim();
-                if(!loc || !cal) { alert('Completá la nueva dirección.'); return; }
-                destinoFinal = `${cal}, ${loc}`;
+                const nro = document.getElementById('new-nro').value.trim();
+                if(!loc || !cal || !nro) { 
+                    lanzarAvisoFlotantePasarela('❌ Completá la nueva dirección de despacho.', false); 
+                    return; 
+                }
+                destinoFinal = `${cal} ${nro}, ${loc}`;
             }
 
-            // VALIDACIONES DEL FORMULARIO DE TARJETA ACTUALIZADAS
             if(met === 'Tarjeta') {
                 const num = document.getElementById('card-number').value.trim();
                 const titular = document.getElementById('card-name').value.trim();
@@ -280,58 +338,78 @@
                 const cvc = document.getElementById('card-cvc').value.trim();
                 
                 if(!num || !titular || !exp || !cvc) { 
-                    alert('Completá todos los campos de la tarjeta nueva para simular la pasarela.'); 
+                    lanzarAvisoFlotantePasarela('❌ Completá todos los campos de la tarjeta nueva para simular la pasarela.', false); 
                     return; 
                 }
-                
                 if(exp.length < 5) {
-                    alert('Por favor, ingresá una fecha de vencimiento válida con el formato MM/AA.');
+                    lanzarAvisoFlotantePasarela('❌ Fecha de vencimiento inválida (Formato: MM/AA).', false);
                     return;
                 }
-
                 if(cvc.length !== 3) {
-                    alert('El código de seguridad (CVC) debe tener exactamente 3 números.');
+                    lanzarAvisoFlotantePasarela('❌ El CVC de seguridad debe poseer exactamente 3 números.', false);
                     return;
                 }
-            }
-
-            if(cuponCodigoActivo) {
-                CuponService.marcarComoUsado(cuponCodigoActivo);
             }
 
             let catalogo = JSON.parse(localStorage.getItem('catalogo-dinamico')) || [];
             carrito.forEach(item => {
-                const target = catalogo.find(p => p.id === item.id);
-                if(target) target.stock = Math.max(0, target.stock - item.cantidad);
+                const target = catalogo.find(p => p.id == item.id);
+                if(target && target.stock !== undefined) {
+                    target.stock = Math.max(0, target.stock - item.cantidad);
+                }
             });
             localStorage.setItem('catalogo-dinamico', JSON.stringify(catalogo));
 
-            let totalFactura = CarritoService.calcularSubtotal() - descuentoAplicado;
-            let resumenTexto = carrito.map(item => `${item.cantidad}x ${item.nombre}`).join(', ');
+            const listadoArticulosNombres = carrito.map(item => `${item.cantidad}x ${item.nombre}`).join(', ');
+            const subtotalCompra = carrito.reduce((acc, item) => acc + (item.precio * item.cantidad), 0);
+            const montoFinalNeto = Math.max(0, subtotalCompra - descuentoAplicado);
+            const nuevaOrdenId = "B-" + Math.floor(100 + Math.random() * 900); 
+            const fechaHoy = new Date().toISOString().split('T')[0];
 
-            const nuevaOrden = {
-                id: "BA-" + Math.floor(1000 + Math.random() * 9000),
-                fecha: new Date().toISOString().split('T')[0],
+            const nuevaOrdenAdmin = {
+                id: nuevaOrdenId,
+                fecha: fechaHoy,
                 clienteEmail: mailComprador,
                 clienteNombre: nomComprador,
-                detalle: resumenTexto,
+                detalle: listadoArticulosNombres,
                 destino: destinoFinal,
-                total: totalFactura,
-                estado: "Pendiente",
-                tracking: "No asignado (Esperando Andreani)",
+                total: montoFinalNeto,
+                estado: "Procesando",
+                tracking: "AND-" + Math.floor(700000000 + Math.random() * 200000000),
                 metodo: met,
                 cuponUsado: cuponCodigoActivo || "Ninguno"
             };
 
             let pedidosGlobales = JSON.parse(localStorage.getItem('global-pedidos')) || [];
-            pedidosGlobales.push(nuevaOrden);
+            pedidosGlobales.unshift(nuevaOrdenAdmin);
             localStorage.setItem('global-pedidos', JSON.stringify(pedidosGlobales));
 
-            dispararNotificacionMailReal(nuevaOrden);
+            let comprasDelUsuario = JSON.parse(localStorage.getItem(`compras-${mailComprador}`)) || [];
+            const nuevaOrdenCliente = {
+                id: nuevaOrdenId,
+                fecha: fechaHoy,
+                total: montoFinalNeto,
+                detalle: listadoArticulosNombres,
+                estado: "Procesando"
+            };
+            comprasDelUsuario.unshift(nuevaOrdenCliente);
+            localStorage.setItem(`compras-${mailComprador}`, JSON.stringify(comprasDelUsuario));
 
-            alert('¡Operación finalizada con éxito! Factura y tracking asincrónico enviados al correo electrónico.');
-            CarritoService.vaciar();
-            window.location.href = 'productos.html';
+            if (cuponCodigoActivo && typeof CuponService !== 'undefined') {
+                CuponService.marcarComoUsado(cuponCodigoActivo);
+            }
+
+            if (typeof despacharCorreoConfirmacionOrden === "function") {
+                despacharCorreoConfirmacionOrden(mailComprador, nuevaOrdenAdmin);
+            }
+
+            if (typeof CarritoService !== 'undefined') {
+                CarritoService.vaciar();
+            } else {
+                localStorage.removeItem('carrito-bodyart');
+            }
+            
+            lanzarAvisoFlotantePasarela(`✨ ¡Operación Exitosa!\n\nSe generó la Orden N° ${nuevaOrdenId}. Despachamos un correo automático de confirmación y el detalle de pago a: ${mailComprador}.`, true);
         }
     </script>
 </body>

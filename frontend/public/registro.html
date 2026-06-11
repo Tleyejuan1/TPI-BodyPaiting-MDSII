@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Body Art - Crear Cuenta</title>
-    <!-- Versión clásica de desarrollo para compatibilidad nativa con file:/// -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0;1&family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap');
@@ -15,7 +14,6 @@
 </head>
 <body class="bg-gray-50 text-gray-900 min-h-screen flex flex-col justify-between">
 
-    <!-- BARRA DE NAVEGACIÓN -->
     <nav class="bg-white border-b border-gray-100 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-20 items-center">
@@ -32,7 +30,6 @@
         </div>
     </nav>
 
-    <!-- FORMULARIO DE REGISTRO CON UBICACIÓN COMPLETAL -->
     <main class="flex-grow flex items-center justify-center px-4 py-12">
         <div class="bg-white p-8 border border-gray-200 rounded-sm shadow-sm max-w-md w-full space-y-6 text-xs">
             <div class="text-center space-y-1">
@@ -41,56 +38,53 @@
             </div>
 
             <form onsubmit="registrarUsuarioEnWeb(event)" class="space-y-4">
-                <!-- DATOS PERSONALES -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label class="block font-bold text-gray-600 mb-1 uppercase tracking-wider">Nombre Completo</label>
-                        <input type="text" id="reg-nombre" required placeholder="Juan Cruz" class="w-full border border-gray-300 p-3 bg-white rounded-sm focus:outline-none focus:border-purple-600 text-xs font-medium">
+                        <label class="block font-bold text-gray-900 mb-1 uppercase tracking-wider">Nombre Completo</label>
+                        <input type="text" id="reg-nombre" required placeholder="Tu Nombre" class="w-full border border-gray-300 p-3 bg-white rounded-sm focus:outline-none focus:border-purple-600 text-xs font-medium uppercase text-gray-900">
                     </div>
                     <div>
-                        <label class="block font-bold text-gray-600 mb-1 uppercase tracking-wider">Correo Electrónico</label>
-                        <input type="text" id="reg-email" required placeholder="tatuador@gmail.com" class="w-full border border-gray-300 p-3 bg-white rounded-sm focus:outline-none focus:border-purple-600 text-xs font-medium font-mono">
+                        <label class="block font-bold text-gray-900 mb-1 uppercase tracking-wider">Correo Electrónico</label>
+                        <input type="text" id="reg-email" required placeholder="tumail@gmail.com" class="w-full border border-gray-300 p-3 bg-white rounded-sm focus:outline-none focus:border-purple-600 text-xs font-medium font-mono text-gray-900 normal-case">
                     </div>
                 </div>
 
-                <!-- CONTRASEÑA -->
                 <div>
-                    <label class="block font-bold text-gray-600 mb-1 uppercase tracking-wider">Contraseña</label>
-                    <input type="password" id="reg-password" required placeholder="••••••••" class="w-full border border-gray-300 p-3 bg-white rounded-sm focus:outline-none focus:border-purple-600 text-xs font-medium">
+                    <label class="block font-bold text-gray-900 mb-1 uppercase tracking-wider">Contraseña</label>
+                    <input type="password" id="reg-password" required placeholder="••••••••" class="w-full border border-gray-300 p-3 bg-white rounded-sm focus:outline-none focus:border-purple-600 text-xs font-medium text-gray-900">
                 </div>
 
-                <!-- DIRECCIÓN DE ENTREGA / LOGÍSTICA -->
-                <div class="border-t pt-4 space-y-4">
+                <div class="border-t border-gray-200 pt-4 space-y-4">
                     <h3 class="font-bold text-purple-600 uppercase tracking-wider text-[11px]"><i class="fa-solid fa-truck"></i> Datos de Envío Postal</h3>
                     
                     <div>
-                        <label class="block font-bold text-gray-600 mb-1 uppercase tracking-wider">Dirección (Calle y Número)</label>
-                        <input type="text" id="reg-direccion" required placeholder="Av. Universidad 1200" class="w-full border border-gray-300 p-3 bg-white rounded-sm focus:outline-none focus:border-purple-600 text-xs font-medium">
+                        <label class="block font-bold text-gray-900 mb-1 uppercase tracking-wider">Dirección (Calle y Número)</label>
+                        <input type="text" id="reg-direccion" required placeholder="Av. Universidad 1200" class="w-full border border-gray-300 p-3 bg-white rounded-sm focus:outline-none focus:border-purple-600 text-xs font-medium uppercase text-gray-900">
                     </div>
 
                     <div class="grid grid-cols-2 gap-2">
                         <div>
-                            <label class="block font-bold text-gray-600 mb-1 uppercase tracking-wider">Localidad</label>
-                            <input type="text" id="reg-localidad" required placeholder="Villa María" class="w-full border border-gray-300 p-3 bg-white rounded-sm focus:outline-none focus:border-purple-600 text-xs font-medium">
+                            <label class="block font-bold text-gray-900 mb-1 uppercase tracking-wider">Localidad</label>
+                            <input type="text" id="reg-localidad" required placeholder="Villa María" class="w-full border border-gray-300 p-3 bg-white rounded-sm focus:outline-none focus:border-purple-600 text-xs font-medium uppercase text-gray-900">
                         </div>
                         <div>
-                            <label class="block font-bold text-gray-600 mb-1 uppercase tracking-wider">Provincia</label>
-                            <input type="text" id="reg-provincia" required placeholder="Córdoba" class="w-full border border-gray-300 p-3 bg-white rounded-sm focus:outline-none focus:border-purple-600 text-xs font-medium">
+                            <label class="block font-bold text-gray-900 mb-1 uppercase tracking-wider">Provincia</label>
+                            <input type="text" id="reg-provincia" required placeholder="Córdoba" class="w-full border border-gray-300 p-3 bg-white rounded-sm focus:outline-none focus:border-purple-600 text-xs font-medium uppercase text-gray-900">
                         </div>
                     </div>
 
                     <div>
-                        <label class="block font-bold text-gray-600 mb-1 uppercase tracking-wider">Código Postal (CP)</label>
-                        <input type="text" id="reg-cp" required placeholder="5900" class="w-full border border-gray-300 p-3 bg-white rounded-sm focus:outline-none focus:border-purple-600 text-xs font-medium font-mono">
+                        <label class="block font-bold text-gray-900 mb-1 uppercase tracking-wider">Código Postal (CP)</label>
+                        <input type="text" id="reg-cp" required placeholder="5900" class="w-full border border-gray-300 p-3 bg-white rounded-sm focus:outline-none focus:border-purple-600 text-xs font-medium font-mono text-gray-900">
                     </div>
                 </div>
 
-                <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold uppercase py-3.5 rounded-sm tracking-widest transition shadow-sm cursor-pointer">
+                <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold uppercase py-3.5 rounded-sm tracking-widest transition shadow-sm cursor-pointer text-xs">
                     Crear mi Cuenta VIP
                 </button>
             </form>
 
-            <div class="text-center border-t pt-4 text-gray-400">
+            <div class="text-center border-t border-gray-200 pt-4 text-gray-400 font-semibold">
                 ¿Ya tenés un usuario registrado? <a href="login.html" class="text-purple-600 font-bold hover:underline">Iniciá sesión acá</a>
             </div>
         </div>
@@ -105,30 +99,37 @@
             event.preventDefault();
 
             const nombreInput = document.getElementById('reg-nombre').value.trim();
-            const emailInput = document.getElementById('reg-email').value.trim();
+            const emailInput = document.getElementById('reg-email').value.trim().toLowerCase();
             const passwordInput = document.getElementById('reg-password').value;
             
-            // Datos de envío y localización
             const direccionInput = document.getElementById('reg-direccion').value.trim();
             const localidadInput = document.getElementById('reg-localidad').value.trim();
             const provinciaInput = document.getElementById('reg-provincia').value.trim();
             const cpInput = document.getElementById('reg-cp').value.trim();
 
+            // 🔥 CLAVE CORREGIDA: Cambiado a 'global-usuarios' para sincronizarse con el Admin y los Cupones
             let listaUsuarios = JSON.parse(localStorage.getItem('global-usuarios')) || [];
 
-            // Evitamos que registren un correo repetido
             const existe = listaUsuarios.some(u => u.email === emailInput);
             if (existe) {
                 alert("❌ Error: Este usuario/correo ya se encuentra registrado.");
                 return;
             }
 
-            // Creamos el objeto completo para alimentar los despachos del administrador
+            // Armamos la dirección de forma plana e inyectamos el desglose compatible con el resto del sitio
+            const stringDireccionCompleta = `${direccionInput}, ${localidadInput}, ${provinciaInput}`;
+
             const nuevoUsuario = {
                 nombre: nombreInput,
                 email: emailInput,
                 password: passwordInput,
-                direccion: direccionInput,
+                direccion: stringDireccionCompleta,
+                direccionDesglosada: {
+                    calle: direccionInput,
+                    piso: "",
+                    ciudad: localidadInput,
+                    provincia: provinciaInput
+                },
                 localidad: localidadInput,
                 provincia: provinciaInput,
                 cp: cpInput,

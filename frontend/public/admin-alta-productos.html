@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dark Phase Admin - Cargar Insumos y Kits</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800 min-h-screen flex flex-col uppercase text-xs tracking-wider" onload="initAltaProductos();">
+
+    <header class="bg-white border-b border-gray-200 h-20 flex justify-between items-center px-8 sticky top-0 z-50">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-purple-600 text-white rounded-full flex items-center justify-center font-bold text-sm">BA</div>
+            <h1 class="font-bold text-gray-900 tracking-widest text-sm">Consola Administrativa</h1>
+        </div>
+        <a href="productos.html" class="text-gray-500 hover:text-purple-600 font-bold text-[10px]">Ver Sitio Público</a>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex-grow space-y-6">
+        <nav class="bg-white border-b border-gray-200 flex flex-wrap text-xs font-medium uppercase tracking-wider">
+            <a href="admin-dashboard.html" class="p-4 text-gray-400 hover:text-gray-600 flex items-center gap-2"><i class="fa-solid fa-warehouse"></i> Inventario</a>
+            <a href="admin-alta-productos.html" class="p-4 text-purple-600 border-b-2 border-purple-600 flex items-center gap-2 font-bold"><i class="fa-solid fa-square-plus"></i> Publicar Insumo</a>
+            <a href="admin-logistica.html" class="p-4 text-gray-400 hover:text-gray-600 flex items-center gap-2"><i class="fa-solid fa-truck-ramp-box"></i> Envíos</a>
+            <a href="admin-cupones.html" class="p-4 text-gray-400 hover:text-gray-600 flex items-center gap-2"><i class="fa-solid fa-ticket"></i> Cupones Club</a>
+            <a href="admin-porfolio.html" class="p-4 text-gray-400 hover:text-gray-600 flex items-center gap-2"><i class="fa-solid fa-photo-film"></i> Porfolio Videos</a>
+        </nav>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- FORMULARIO DE ALTA MODIFICADO -->
+            <div class="bg-white p-6 border border-gray-200 rounded-sm shadow-sm space-y-4 h-fit">
+                <div class="text-sm font-bold border-b pb-2 text-purple-600"><i class="fa-solid fa-pen-to-square"></i> Carga de Producto / Kit</div>
+                
+                <form id="formulario-alta-producto" onsubmit="ejecutarAltaProducto(event)" class="space-y-3">
+                    <div>
+                        <label class="block font-bold text-gray-600 mb-1 uppercase">Tipo de Publicación</label>
+                        <select id="prod-tipo" onchange="conmutarTipoProducto()" class="w-full border p-2 bg-white rounded-sm font-bold outline-none border-purple-300">
+                            <option value="INDIVIDUAL">Insumo Individual</option>
+                            <option value="KIT">Combo / Kit Armado</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block font-bold text-gray-600 mb-1 uppercase">Nombre Comercial</label>
+                        <input type="text" id="prod-nombre" required oninput="actualizarLivePreview()" placeholder="Ej: Kit Blackout Tattoo" class="w-full border p-2.5 bg-white rounded-sm focus:border-purple-600 outline-none font-medium">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block font-bold text-gray-600 mb-1 uppercase">Código Único</label>
+                            <input type="text" id="prod-desc" required oninput="actualizarLivePreview()" placeholder="Ej: KIT-03" class="w-full border p-2.5 bg-white rounded-sm focus:border-purple-600 outline-none font-mono font-bold uppercase">
+                        </div>
+                        <div>
+                            <label class="block font-bold text-gray-600 mb-1 uppercase">Stock Inicial</label>
+                            <input type="number" id="prod-stock" required min="1" placeholder="10" class="w-full border p-2.5 bg-white rounded-sm focus:border-purple-600 outline-none font-medium">
+                        </div>
+                    </div>
+
+                    <!-- SELECTOR DINÁMICO DE COMPONENTES PARA KITS -->
+                    <div id="contenedor-selector-componentes" class="hidden border border-dashed border-purple-300 p-3 bg-purple-50/50 rounded-sm space-y-2">
+                        <label class="block font-bold text-purple-700 uppercase text-[10px]">Seleccionar Insumos que integran el Kit:</label>
+                        <div id="lista-checkboxes-insumos" class="max-h-32 overflow-y-auto space-y-1.5 p-1 bg-white border text-[10px] normal-case font-medium text-gray-600">
+                            <!-- Se llena por JS -->
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block font-bold text-gray-600 mb-1 uppercase">Descripción</label>
+                        <textarea id="prod-detalles" required oninput="actualizarLivePreview()" placeholder="Describí los componentes o detalles del artículo..." class="w-full border p-2.5 bg-white rounded-sm focus:border-purple-600 outline-none font-medium h-16 resize-none"></textarea>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-2">
+                        <div>
+                            <label class="block font-bold text-gray-500 mb-1 uppercase text-[9px]">Costo ($)</label>
+                            <input type="number" id="prod-costo" required oninput="calcularPreciosIva()" placeholder="2000" class="w-full border p-2.5 bg-white rounded-sm focus:border-purple-600 outline-none font-medium">
+                        </div>
+                        <div>
+                            <label class="block font-bold text-gray-400 mb-1 uppercase text-[9px]">IVA (21%)</label>
+                            <input type="text" id="prod-iva-visual" disabled value="$0" class="w-full border p-2.5 bg-gray-50 text-gray-400 font-bold text-center rounded-sm">
+                        </div>
+                        <div>
+                            <label class="block font-bold text-purple-600 mb-1 uppercase text-[9px]">P. Venta ($)</label>
+                            <input type="number" id="prod-precio" required placeholder="2420" oninput="actualizarLivePreview()" class="w-full border p-2.5 bg-white rounded-sm border-purple-300 focus:border-purple-600 outline-none font-bold text-gray-900">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block font-bold text-gray-600 mb-1 uppercase">Origen de Imagen</label>
+                        <select id="prod-origen-foto" onchange="conmutarModoFoto()" class="w-full border p-2 bg-white rounded-sm font-bold outline-none">
+                            <option value="url">Pegar Enlace Remoto (URL)</option>
+                            <option value="pc">Subir Archivo desde PC</option>
+                        </select>
+                    </div>
+                    <div id="contenedor-foto-url">
+                        <input type="text" id="prod-foto-url" oninput="actualizarLivePreview()" placeholder="https://..." class="w-full border p-2.5 bg-white rounded-sm outline-none text-[11px]">
+                    </div>
+                    <div id="contenedor-foto-file" class="hidden">
+                        <input type="file" id="prod-foto-file" accept="image/*" onchange="procesarFotoLocal(this)" class="w-full border p-2 bg-white rounded-sm text-[10px]">
+                    </div>
+
+                    <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold uppercase py-3 rounded-sm tracking-widest transition">Publicar Artículo</button>
+                </form>
+            </div>
+            
+            <!-- LIVE PREVIEW -->
+            <div class="md:col-span-2 flex flex-col justify-start items-center p-8 bg-gray-50 border border-dashed border-gray-300 rounded-sm">
+                <div class="w-72 bg-white border border-gray-100 rounded-sm overflow-hidden p-6 flex flex-col justify-between shadow-sm min-h-[400px]">
+                    <div>
+                        <div id="preview-box-foto" class="h-44 bg-gray-100 mb-4 overflow-hidden rounded-sm flex items-center justify-center text-gray-400 text-2xl border"><i class="fa-solid fa-image"></i></div>
+                        <div class="flex justify-between items-start mb-1">
+                            <h3 id="preview-txt-nombre" class="font-bold text-base text-gray-900 normal-case leading-tight">Nombre</h3>
+                            <span id="preview-badge-codigo" class="text-[9px] font-mono text-purple-600 bg-purple-50 px-1.5 py-0.5 rounded-sm font-bold">VAR</span>
+                        </div>
+                        <p id="preview-txt-desc" class="text-gray-400 text-xs mb-4 leading-relaxed normal-case">Detalles...</p>
+                    </div>
+                    <div>
+                        <div id="preview-txt-precio" class="text-lg font-bold mb-4 text-gray-900">$0</div>
+                        <button type="button" disabled class="w-full bg-gray-300 text-white text-[10px] py-3 rounded-sm font-bold cursor-not-allowed">Añadir al carrito</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="admin-controller.js"></script>
+    <script>
+        function initAltaProductos() {
+            actualizarLivePreview();
+            llenarInsumosParaKit();
+        }
+
+        function conmutarTipoProducto() {
+            const tipo = document.getElementById('prod-tipo').value;
+            const contenedorComp = document.getElementById('contenedor-selector-componentes');
+            const codigoInput = document.getElementById('prod-desc');
+
+            if (tipo === 'KIT') {
+                contenedorComp.classList.remove('hidden');
+                if(!codigoInput.value.startsWith("KIT-")) {
+                    codigoInput.value = "KIT-";
+                }
+            } else {
+                contenedorComp.classList.add('hidden');
+                if(codigoInput.value.startsWith("KIT-")) {
+                    codigoInput.value = "";
+                }
+            }
+            actualizarLivePreview();
+        }
+
+        function llenarInsumosParaKit() {
+            const catalogo = JSON.parse(localStorage.getItem('catalogo-dinamico')) || [];
+            const listaDiv = document.getElementById('lista-checkboxes-insumos');
+            if(!listaDiv) return;
+
+            // Filtramos para mostrar solo los individuales y no anidar Kits dentro de Kits
+            const individuales = catalogo.filter(p => !p.codigo.includes("KIT"));
+
+            if(individuales.length === 0) {
+                listaDiv.innerHTML = "<p class='p-2 italic text-gray-400'>Cargá insumos individuales primero en el catálogo para poder listarlos acá.</p>";
+                return;
+            }
+
+            listaDiv.innerHTML = individuales.map(p => `
+                <label class="flex items-center gap-2 hover:bg-gray-50 p-1 rounded-sm cursor-pointer">
+                    <input type="checkbox" name="insumos-seleccionados" value="${p.nombre}" class="rounded border-gray-300 text-purple-600 focus:ring-purple-500" onchange="actualizarDescripcionAutomaticaKit()">
+                    <span>[${p.codigo}] ${p.nombre}</span>
+                </label>
+            `).join('');
+        }
+
+        function actualizarDescripcionAutomaticaKit() {
+            const checkboxes = document.querySelectorAll('input[name="insumos-seleccionados"]:checked');
+            const tipo = document.getElementById('prod-tipo').value;
+            if (tipo !== 'KIT') return;
+
+            const nombres = Array.from(checkboxes).map(cb => cb.value);
+            const detallesTextArea = document.getElementById('prod-detalles');
+            
+            if(nombres.length > 0) {
+                detallesTextArea.value = "Combo especial armado. Incluye: " + nombres.join(', ') + ".";
+            } else {
+                detallesTextArea.value = "";
+            }
+            actualizarLivePreview();
+        }
+    </script>
+</body>
+</html>
