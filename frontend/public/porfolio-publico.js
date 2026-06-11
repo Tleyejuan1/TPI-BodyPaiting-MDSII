@@ -1,23 +1,18 @@
-// =========================================================================
-// INITIALIZER CENTRAL DE LA PÁGINA PÚBLICA DE VIDEOS
-// =========================================================================
+// INITIALIZER CENTRAL DE LA PÁGINA PÚBLICA DE VIDEO
 function initPantallaVideos() {
     renderizarPorfolioPublico();
     chequearSesionGlobal();
 }
-
-// =========================================================================
 // REGLA DE NEGOCIO: INYECCIÓN AUTOMÁTICA DE LOS 6 VIDEOS PREESTABLECIDOS
-// =========================================================================
 function inicializarVideosPreestablecidos() {
     let vids = JSON.parse(localStorage.getItem('global-videos')) || [];
     
-    // Si la base de datos local está vacía, monta los 6 videos estables con mp4 reales que reproducen al toque
+    // Si la base de datos local está vacía
     if (vids.length === 0) {
         vids = [
             { 
                 id: 1001, 
-                titulo: "Tatuaje Realismo Black and Grey - Proceso", 
+                titulo: "BODYART - Proceso", 
                 desc: "Técnica avanzada de dilución de tintas oscuras y degradación sólida sobre piel.", 
                 src: "https://vjs.zencdn.net/v/oceans.mp4", 
                 esEmbed: false 
@@ -61,10 +56,7 @@ function inicializarVideosPreestablecidos() {
         localStorage.setItem('global-videos', JSON.stringify(vids));
     }
 }
-
-// =========================================================================
 // RENDERIZADO EN GRILLA PANORÁMICA (ESTILO YOUTUBE - 3 COLUMNAS)
-// =========================================================================
 function renderizarPorfolioPublico() {
     inicializarVideosPreestablecidos();
 
@@ -108,9 +100,7 @@ function renderizarPorfolioPublico() {
     contenedor.innerHTML = htmlContenido;
 }
 
-// =========================================================================
 // CONTROL PERSISTENTE DE SESIONES DE NAVEGACIÓN
-// =========================================================================
 function chequearSesionGlobal() {
     const u = JSON.parse(localStorage.getItem('usuario-sesion'));
     const btnLogin = document.getElementById('nav-login-btn');

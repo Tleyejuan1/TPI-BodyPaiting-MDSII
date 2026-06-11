@@ -1,14 +1,9 @@
-// =========================================================================
-// VARIABLES GLOBALES DE CONTROL (ESTADO CENTRALIZADO)
-// =========================================================================
 let pedidoSeleccionadoId = null;
 let tipoAccionActual = "";
 let fotoCargadaBase64 = ""; 
 let videoCargadoBase64 = "";
 
-// =========================================================================
 // CONMUTADORES DE INTERFAZ Y MODOS DE CARGA (URL vs DISCO LOCAL)
-// =========================================================================
 function conmutarModoFoto() {
     const modo = document.getElementById('prod-origen-foto').value;
     if (modo === 'url') {
@@ -42,10 +37,7 @@ function conmutarModoVideo() {
         if(inputUrl) inputUrl.value = "";
     }
 }
-
-// =========================================================================
-// PROCESAMIENTO DE ARCHIVOS EN BASE64 (FileReader)
-// =========================================================================
+// PROCESAMIENTO DE ARCHIVOS EN BASE64 (FileReader
 function procesarFotoLocal(input) {
     const archivo = input.files[0];
     if (archivo) {
@@ -74,9 +66,7 @@ function procesarVideoLocal(input) {
     }
 }
 
-// =========================================================================
 // MÓDULO 1: ALTA Y PREVIEW EN TIEMPO REAL DE PRODUCTOS
-// =========================================================================
 function calcularPreciosIva() {
     const costo = parseFloat(document.getElementById('prod-costo').value) || 0;
     const iva = costo * 0.21;
@@ -155,10 +145,7 @@ function ejecutarAltaProducto(e) {
     alert(`✨ ¡Publicación exitosa! Registrado como: ${codigo}`);
     window.location.href = "admin-dashboard.html";
 }
-
-// =========================================================================
-// MÓDULO 2: TABLA PANORÁMICA GENERAL E INVENTARIO CONTROLADO
-// =========================================================================
+// MÓDULO 2: TABLA PANORÁMICA GENERAL E INVENTARIO CONTROLAD
 function cargarInventarioCompletoPanoramico() {
     const prods = JSON.parse(localStorage.getItem('catalogo-dinamico')) || [];
     const tabla = document.getElementById('tabla-inventario-panoramica');
@@ -250,9 +237,7 @@ function ejecutarReabastecimiento(id) {
     cargarInventarioCompletoPanoramico(); 
 }
 
-// =========================================================================
 // MÓDULO 3: GESTIÓN DE ENVÍOS Y LOGÍSTICA (CON DISPARADOR DE EMAILJS AUTOMÁTICO)
-// =========================================================================
 function cargarPedidosAdmin() {
     const tabla = document.getElementById('tabla-pedidos-admin');
     if(!tabla) return;
@@ -309,7 +294,7 @@ function cargarPedidosAdmin() {
     }).join('');
 }
 
-// 🔥 MODIFICADO: AHORA ENVÍA EL MAIL POR CADA CAMBIO DE ESTADO LOGÍSTICO MEDIANTE EMAILJS
+// MODIFICADO: AHORA ENVÍA EL MAIL POR CADA CAMBIO DE ESTADO LOGÍSTICO MEDIANTE EMAILJS
 function cambiarEstadoSincronizado(emailCliente, idPedido, nuevoEstado) {
     const clave = `compras-${emailCliente}`;
     let compras = JSON.parse(localStorage.getItem(clave)) || [];
@@ -362,11 +347,10 @@ function cambiarEstadoSincronizado(emailCliente, idPedido, nuevoEstado) {
     cargarPedidosAdmin();
 }
 
-// =========================================================================
+
 // MÓDULO 4: CONTROL DE BENEFICIOS Y ASIGNACIÓN DE CUPONES (CUPOS LIMITADOS)
-// =========================================================================
 function refrescarSelectorClientes() {
-    // 🔥 CORREGIDO: Ahora lee de 'global-usuarios' de forma simétrica con el registro
+    // CORREGIDO: Ahora lee de 'global-usuarios' de forma simétrica con el registro
     const todosUsuarios = JSON.parse(localStorage.getItem('global-usuarios')) || [];
     const select = document.getElementById('cup-cliente-select');
     
@@ -435,7 +419,7 @@ function ejecutarAltaCupon(e) {
         motivoAdmin: `¡Felicidades! La administración te ha asignado un beneficio comercial exclusivo. Ingresá el código promocional "${codigo}" al momento de liquidar tu carrito de compras para descontar de forma directa $${monto.toLocaleString('es-AR')} del subtotal de tus insumos. Cobertura: Válido para ${usosPermitidos} uso(s) personal(es).`
     };
 
-    // 🔥 CONEXIÓN A EMAILJS DE FORMA SEGURA (Llamando a window para evitar fallbacks)
+    // CONEXIÓN A EMAILJS DE FORMA SEGURA (Llamando a window para evitar fallbacks)
     if (typeof window.dispararNotificacionMailReal === "function") {
         window.dispararNotificacionMailReal(objetoMailCupon);
     } else {
@@ -480,10 +464,7 @@ function cargarCuponesVendedor() {
             </tr>`;
     }).join('');
 }
-
-// =========================================================================
-// MÓDULO 5: GESTIÓN INTEGRAL DEL PORFOLIO Y CARGA DE VIDEOS (OPTIMIZADO)
-// =========================================================================
+// MÓDULO 5: GESTIÓN INTEGRAL DEL PORFOLIO Y CARGA DE VIDEOS (OPTIMIZADO
 function formatearUrlVideo(url) {
     let link = url.trim();
     if (link.includes("youtube.com/watch?v=")) {
@@ -587,9 +568,7 @@ function cargarVideosAdmin() {
     }).join('');
 }
 
-// =========================================================================
 // MÓDULO 6: UTILIDADES GLOBALES DE SISTEMA Y LOGOUT
-// =========================================================================
 function reinicioDeFabricaTotal() { 
     if(confirm("⚠ ¡Esto borrará todos los productos, cupones y videos del LocalStorage! ¿Continuar?")) {
         localStorage.clear(); 
